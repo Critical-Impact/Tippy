@@ -1,25 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="Dalamud.Plugin.Bootstrap.targets"/>
+    
 	<PropertyGroup>
 		<Version>1.4.0.0</Version>
 		<Title>Tippy</Title>
-		<Authors>kalilistic</Authors>
-		<TargetFramework>net7.0-windows</TargetFramework>
-		<Platforms>x64</Platforms>
-		<LangVersion>latest</LangVersion>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<Nullable>enable</Nullable>
-		<Deterministic>true</Deterministic>
-		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-		<OutputPath>bin\$(Configuration)\</OutputPath>
-		<DalamudLibPath>$(appdata)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
-		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<ProduceReferenceAssembly>false</ProduceReferenceAssembly>
-		<UseWindowsForms>false</UseWindowsForms>
-		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+		<Authors>kalilistic,Critical-Impact</Authors>
+        <OutputType>Library</OutputType>
+        <OutputPath>bin\$(Configuration)\</OutputPath>
+        <Configurations>Debug;Release;FullDebug</Configurations>
+        <TargetFramework>net8.0-windows</TargetFramework>
 	</PropertyGroup>
+    
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 		<DebugSymbols>true</DebugSymbols>
 		<DebugType>full</DebugType>
@@ -44,48 +35,11 @@
 		</AdditionalFiles>
 	</ItemGroup>
 	<ItemGroup>
-		<Reference Include="CheapLoc">
-			<HintPath>$(DalamudLibPath)CheapLoc.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="Dalamud">
-			<HintPath>$(DalamudLibPath)Dalamud.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="FFXIVClientStructs">
-			<HintPath>$(DalamudLibPath)FFXIVClientStructs.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="ImGui.NET">
-			<HintPath>$(DalamudLibPath)ImGui.NET.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="ImGuiScene">
-			<HintPath>$(DalamudLibPath)ImGuiScene.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="Lumina">
-			<HintPath>$(DalamudLibPath)Lumina.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="Lumina.Excel">
-			<HintPath>$(DalamudLibPath)Lumina.Excel.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="ImGui.NET">
-			<HintPath>$(DalamudLibPath)ImGui.NET.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="Newtonsoft.Json">
-			<HintPath>$(DalamudLibPath)Newtonsoft.Json.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-	</ItemGroup>
-	<ItemGroup>
-		<PackageReference Include="DalamudPackager" Version="2.1.10" />
-		<PackageReference Include="Dalamud.DrunkenToad" Version="1.2.0" />
-        <PackageReference Include="NAudio.Core" Version="2.1.0" />
-        <PackageReference Include="NAudio.Wasapi" Version="2.1.0" />
+		<PackageReference Include="CheapLoc" Version="1.1.8" />
+		<PackageReference Include="DalaMock.Host" Version="2.1.6" />
+		<PackageReference Include="Dalamud.Loc" Version="1.2.1" />
+        <PackageReference Include="NAudio.Core" Version="2.2.1" />
+        <PackageReference Include="NAudio.Wasapi" Version="2.2.1" />
 		<PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.435">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

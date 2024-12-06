@@ -1,217 +1,104 @@
 using System;
+using System.Globalization;
 using System.IO;
-
+using System.Linq;
+using System.Reflection;
+using Autofac;
 using CheapLoc;
-using Dalamud.DrunkenToad;
-using Dalamud.Game;
-using Dalamud.Game.ClientState;
+using DalaMock.Host.Hosting;
 using Dalamud.Game.Command;
+using Dalamud.Interface.Windowing;
 using Dalamud.IoC;
-using Dalamud.Logging;
+using Dalamud.Loc;
 using Dalamud.Plugin;
+using Dalamud.Plugin.Services;
+using FFXIVClientStructs.FFXIV.Client.System.Framework;
+using Microsoft.Extensions.DependencyInjection;
+using Serilog;
+using Tippy.Services;
+using PluginLocalization = Dalamud.Loc.Localization;
 
 namespace Tippy;
 
 /// <inheritdoc />
-public class TippyPlugin : IDalamudPlugin
+public class TippyPlugin : HostedPlugin
 {
-    private readonly TippyUI tippyUI;
-    private readonly string resourceDir;
-    private readonly Localization localization;
-    private readonly TippyProvider tippyProvider;
+    private readonly PluginLocalization localization;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TippyPlugin"/> class.
     /// </summary>
-    public TippyPlugin()
+    public TippyPlugin(
+        IDalamudPluginInterface pluginInterface,
+        IPluginLog pluginLog,
+        ICommandManager commandManager,
+        IClientState clientState,
+        IFramework framework,
+        ITextureProvider textureProvider)
+        : base(pluginInterface, pluginLog, commandManager, clientState, framework, textureProvider)
     {
-        this.localization = new Localization(PluginInterface, CommandManager);
-        this.resourceDir = Path.Combine(PluginInterface.AssemblyLocation.DirectoryName!, "Resource");
-        Framework.Update += this.FrameworkOnUpdate;
-        this.LoadConfig();
-        TippyController = new TippyController(this);
-        this.tippyUI = new TippyUI(this);
-        this.tippyProvider = new TippyProvider(PluginInterface, new TippyAPI());
-        CommandManager.AddHandler("/tippy", new CommandInfo(this.ToggleTippy)
+        this.CreateHost();
+        this.localization = new Localization(pluginInterface);
+
+        var allowedLang = new [] { "de", "es", "fr", "it", "ja", "no", "pt", "ru", "zh" };
+
+        var currentUiLang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+        Log.Information("Trying to set up Loc for culture {0}", currentUiLang);
+
+        if (allowedLang.Any(x => currentUiLang == x))
         {
-            HelpMessage = Loc.Localize("Tippy_Toggle_Command", "Show Tippy."),
-            ShowInHelp = true,
-        });
-        CommandManager.AddHandler("/tippyconfig", new CommandInfo(this.ToggleTippyConfig)
-        {
-            HelpMessage = Loc.Localize("Tippy_Config_Command", "Show Tippy config/settings."),
-            ShowInHelp = true,
-        });
-        CommandManager.AddHandler("/tippysendmsg", new CommandInfo(this.SendMessage)
-        {
-            HelpMessage = Loc.Localize("Tippy_Message_Command", "Send a message for Tippy to show (usually) right away."),
-            ShowInHelp = true,
-        });
-        CommandManager.AddHandler("/tippysendtip", new CommandInfo(this.SendTip)
-        {
-            HelpMessage = Loc.Localize("Tippy_Tip_Command", "Send a tip for Tippy to show later at random."),
-            ShowInHelp = true,
-        });
-    }
-
-    /// <summary>
-    /// Gets job Id.
-    /// </summary>
-    public static uint JobId { get; private set; }
-
-    /// <summary>
-    /// Gets role Id.
-    /// </summary>
-    public static uint RoleId { get; private set; }
-
-    /// <summary>
-    /// Gets tippy controller.
-    /// </summary>
-    public static TippyController TippyController { get; private set; } = null!;
-
-    /// <summary>
-    /// Gets tippy configuration.
-    /// </summary>
-    public static TippyConfig Config { get; private set; } = null!;
-
-    /// <summary>
-    /// Gets framework.
-    /// </summary>
-    [PluginService]
-    public static Framework Framework { get; private set; } = null!;
-
-    /// <summary>
-    /// Gets command manager.
-    /// </summary>
-    [PluginService]
-    public static CommandManager CommandManager { get; private set; } = null!;
-
-    /// <summary>
-    /// Gets client state.
-    /// </summary>
-    [PluginService]
-    public static ClientState ClientState { get; private set; } = null!;
-
-    /// <summary>
-    /// Gets plugin interface.
-    /// </summary>
-    [PluginService]
-    public static DalamudPluginInterface PluginInterface { get; private set; } = null!;
-
-    /// <inheritdoc />
-    public string Name => "Tippy";
-
-    /// <summary>
-    /// Save configuration.
-    /// </summary>
-    public static void SaveConfig()
-    {
-        PluginInterface.SavePluginConfig(Config);
-    }
-
-    /// <summary>
-    /// Get resource path.
-    /// </summary>
-    /// <param name="fileName">resource to retrieve.</param>
-    /// <returns>resource path.</returns>
-    public string GetResourcePath(string fileName)
-    {
-        return Path.Combine(this.resourceDir, fileName);
-    }
-
-    /// <inheritdoc />
-    public void Dispose()
-    {
-        try
-        {
-            CommandManager.RemoveHandler("/tippy");
-            CommandManager.RemoveHandler("/tippyconfig");
-            CommandManager.RemoveHandler("/tippysendmsg");
-            CommandManager.RemoveHandler("/tippysendtip");
-            Framework.Update -= this.FrameworkOnUpdate;
-            this.tippyProvider.Dispose();
-            this.tippyUI.Dispose();
-            TippyController.Dispose();
-            this.localization.Dispose();
-        }
-        catch (Exception ex)
-        {
-            PluginLog.Log(ex, "Failed to dispose plugin.");
-        }
-
-        GC.SuppressFinalize(this);
-    }
-
-    private void ToggleTippyConfig(string command, string arguments)
-    {
-        this.tippyUI.ConfigWindow.IsVisible ^= true;
-    }
-
-    private void ToggleTippy(string command, string arguments)
-    {
-        Config.IsEnabled ^= true;
-        SaveConfig();
-    }
-
-    private void SendMessage(string command, string arguments)
-    {
-        if (string.IsNullOrWhiteSpace(arguments))
-        {
-            arguments = Loc.Localize("Tippy_MsgHelp_Command", "You need to send the message after /tippysendmsg. Like /tippysendmsg I love you Tippy.");
-        }
-
-        TippyController.CloseMessage();
-        var result = TippyController.AddMessage(arguments, MessageSource.User);
-        if (!result) Logger.LogInfo("Failed to send Tippy Tip.");
-    }
-
-    private void SendTip(string command, string arguments)
-    {
-        bool result;
-        if (string.IsNullOrWhiteSpace(arguments))
-        {
-            arguments = Loc.Localize("Tippy_TipHelp_Command", "You need to send the tip after /tippysendtip. Like /tippysendtip I love you Tippy.");
-            TippyController.CloseMessage();
-            result = TippyController.AddMessage(arguments, MessageSource.User);
+            var resourceFile = Assembly.GetExecutingAssembly()
+                                       .GetFile($"Tippy.Tippy.Resource.translation.{currentUiLang}.json");
+            if (resourceFile != null)
+            {
+                StreamReader streamReader = new StreamReader(resourceFile);
+                var lines = streamReader.ReadToEnd();
+                Loc.Setup(lines);
+            }
         }
         else
         {
-            TippyController.CloseMessage();
-            result = TippyController.AddTip(arguments, MessageSource.User);
+            Loc.SetupWithFallbacks();
         }
 
-        if (!result) Logger.LogInfo("Failed to send Tippy Message.");
+        this.Start();
+        //this.LoadConfig();
+        //TippyController = new TippyController(this);
+        //this.tippyUI = new TippyUI(this);
+        //this.tippyProvider = new TippyProvider(PluginInterface, new TippyAPI());
+
     }
 
-    private void FrameworkOnUpdate(Framework framework)
+    public string Name => "Tippy";
+
+    public override void ConfigureContainer(ContainerBuilder containerBuilder)
     {
-        try
-        {
-            if (ClientState.LocalPlayer == null || ClientState.LocalPlayer.ClassJob.GameData == null) return;
-            if (ClientState.LocalPlayer.ClassJob.Id != JobId)
+        // Windows
+        containerBuilder.RegisterType<TippyUI>().AsSelf().SingleInstance();
+        containerBuilder.RegisterType<ConfigWindow>().As<Window>().AsSelf().SingleInstance();
+        containerBuilder.RegisterType<CommandService>().AsSelf().SingleInstance();
+        containerBuilder.RegisterType<ConfigurationLoaderService>().AsSelf().SingleInstance();
+        containerBuilder.RegisterType<JobMonitorService>().AsSelf().SingleInstance();
+        containerBuilder.RegisterType<ResourceService>().AsSelf().SingleInstance();
+        containerBuilder.RegisterType<TippyAPI>().AsImplementedInterfaces().AsSelf().SingleInstance();
+        containerBuilder.RegisterType<TippyController>().AsSelf().SingleInstance();
+        containerBuilder.RegisterType<TippyProvider>().AsSelf().SingleInstance();
+        containerBuilder.RegisterType<Localization>().AsSelf().SingleInstance();
+        containerBuilder.RegisterType<TextHelperService>().AsSelf().SingleInstance();
+
+        containerBuilder.Register(
+            s =>
             {
-                JobId = ClientState.LocalPlayer.ClassJob.Id;
-                RoleId = ClientState.LocalPlayer.ClassJob.GameData.Role;
-                TippyController.JobChanged = true;
-            }
-        }
-        catch (Exception)
-        {
-            // ignored
-        }
+                var configurationLoaderService = s.Resolve<ConfigurationLoaderService>();
+                return configurationLoaderService.GetConfiguration();
+            }).SingleInstance();
     }
 
-    private void LoadConfig()
+    public override void ConfigureServices(IServiceCollection serviceCollection)
     {
-        try
-        {
-            Config = PluginInterface.GetPluginConfig() as TippyConfig ?? new TippyConfig();
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError("Failed to load config so creating new one.", ex);
-            Config = new TippyConfig();
-            SaveConfig();
-        }
+        serviceCollection.AddHostedService(p => p.GetRequiredService<ConfigurationLoaderService>());
+        serviceCollection.AddHostedService(p => p.GetRequiredService<JobMonitorService>());
+        serviceCollection.AddHostedService(p => p.GetRequiredService<TippyController>());
+        serviceCollection.AddHostedService(p => p.GetRequiredService<TippyUI>());
     }
 }

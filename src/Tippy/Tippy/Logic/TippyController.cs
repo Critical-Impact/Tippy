@@ -5,19 +5,25 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Threading;
-
-using Dalamud.DrunkenToad;
-using Dalamud.Interface;
+using System.Threading.Tasks;
+using Dalamud.Interface.Utility;
+using Dalamud.Plugin.Services;
+using Microsoft.Extensions.Hosting;
 using NAudio.Wave;
 using Newtonsoft.Json;
+using Tippy.Services;
 
 namespace Tippy;
 
 /// <summary>
 /// Tippy animation controller.
 /// </summary>
-public class TippyController
+public class TippyController : IHostedService
 {
+    private readonly JobMonitorService jobMonitorService;
+    private readonly TippyConfig tippyConfig;
+    private readonly IPluginLog pluginLog;
+    private readonly TextHelperService textHelperService;
     private readonly Vector2 spriteSize = new(124, 93);
     private readonly Vector2 sheetSize = new(3348, 3162);
     private readonly List<AnimationData> tippyDataList;
@@ -36,13 +42,21 @@ public class TippyController
     /// Initializes a new instance of the <see cref="TippyController"/> class.
     /// </summary>
     /// <param name="plugin">plugin.</param>
-    public TippyController(TippyPlugin plugin)
+    /// <param name="tippyConfig">tippy's configuration.</param>
+    /// <param name="pluginLog">dalamuds plugin log.</param>
+    /// <param name="jobMonitorService">job monitoring service.</param>
+    /// <param name="resourceService">resource service.</param>
+    public TippyController(JobMonitorService jobMonitorService, ResourceService resourceService, TippyConfig tippyConfig, IPluginLog pluginLog, TextHelperService textHelperService)
     {
+        this.jobMonitorService = jobMonitorService;
+        this.tippyConfig = tippyConfig;
+        this.pluginLog = pluginLog;
+        this.textHelperService = textHelperService;
         // build tips
         Tips.BuildAllTips();
 
         // load animations
-        var json = File.ReadAllText(plugin.GetResourcePath("agent.json"));
+        var json = File.ReadAllText(resourceService.GetResourcePath("agent.json"));
         this.tippyDataList = JsonConvert.DeserializeObject<List<AnimationData>>(json)!;
         this.AnimationQueue.Enqueue(AnimationType.Arrive);
         for (var i = 0; i < 2; i++) this.AnimationQueue.Enqueue(AnimationType.TapScreen);
@@ -54,10 +68,8 @@ public class TippyController
         // set sounds
         for (var i = 1; i < 16; i++)
         {
-            this.sounds.Add(i, plugin.GetResourcePath($"sound_{i}.mp3"));
+            this.sounds.Add(i, resourceService.GetResourcePath($"sound_{i}.mp3"));
         }
-
-        this.FrameTimer.Start();
     }
 
     /// <summary>
@@ -88,7 +100,7 @@ public class TippyController
     /// <summary>
     /// Gets last message finished timestamp.
     /// </summary>
-    public long LastMessageFinished { get; private set; }
+    public DateTime? LastMessageFinished { get; private set; }
 
     /// <summary>
     /// Gets tip queue.
@@ -130,7 +142,7 @@ public class TippyController
         this.TipQueue.Clear();
 
         // add intro tips
-        if (initialLoad && TippyPlugin.Config.ShowIntroMessages)
+        if (initialLoad && this.tippyConfig.ShowIntroMessages)
         {
             foreach (var message in Messages.IntroMessages.ToArray())
             {
@@ -140,10 +152,10 @@ public class TippyController
 
         // determine role/job codes
         IEnumerable<Tip> allTips = Tips.GeneralTips;
-        if (TippyPlugin.JobId != 0)
+        if (this.jobMonitorService.CurrentJobId != 0)
         {
-            var jobCode = (JobCode)TippyPlugin.JobId;
-            var roleCode = TippyPlugin.RoleId is 2 or 3 ? RoleCode.DPS : (RoleCode)TippyPlugin.RoleId;
+            var jobCode = (JobCode)this.jobMonitorService.CurrentJobId;
+            var roleCode = this.jobMonitorService.CurrentRoleId is 2 or 3 ? RoleCode.DPS : (RoleCode)this.jobMonitorService.CurrentRoleId;
             allTips = allTips.Concat(Tips.RoleTips[roleCode]).Concat(Tips.JobTips[jobCode]);
         }
 
@@ -157,7 +169,7 @@ public class TippyController
         var shuffledTips = this.ShuffleTips(allTips);
         foreach (var tip in shuffledTips)
         {
-            if (!TippyPlugin.Config.BannedTipIds.Contains(tip.Id))
+            if (!this.tippyConfig.BannedTipIds.Contains(tip.Id))
             {
                 this.TipQueue.Enqueue(tip);
             }
@@ -188,7 +200,7 @@ public class TippyController
     public void GetMessageNow()
     {
         this.CloseMessage();
-        this.LastMessageFinished = 0;
+        this.LastMessageFinished = null;
     }
 
     /// <summary>
@@ -198,7 +210,7 @@ public class TippyController
     {
         this.MessageTimer.Stop();
         this.TippyState = TippyState.Idle;
-        this.LastMessageFinished = DateUtil.CurrentTime();
+        this.LastMessageFinished = DateTime.Now;
         this.CurrentAnimationType = AnimationType.Idle;
     }
 
@@ -208,7 +220,7 @@ public class TippyController
     /// <param name="num">sound to play.</param>
     public void PlaySound(int num)
     {
-        if (!TippyPlugin.Config.IsSoundEnabled || this.isSoundPlaying) return;
+        if (!this.tippyConfig.IsSoundEnabled || this.isSoundPlaying) return;
         if (num == 0) return;
         this.isSoundPlaying = true;
         new Thread(() =>
@@ -221,7 +233,7 @@ public class TippyController
             catch (Exception ex)
             {
                 this.isSoundPlaying = false;
-                Logger.LogError("Failed to create wave file reader", ex);
+                this.pluginLog.Error(ex, "Failed to create wave file reader");
                 return;
             }
 
@@ -248,7 +260,7 @@ public class TippyController
                 catch (Exception ex)
                 {
                     this.isSoundPlaying = false;
-                    Logger.LogError("Failed to create play sound", ex);
+                    this.pluginLog.Error(ex, "Failed to create play sound");
                     return;
                 }
             }
@@ -281,16 +293,15 @@ public class TippyController
             }
 
             // check if waiting for new tip
-            else if (this.TippyState == TippyState.Idle &&
-                      DateUtil.CurrentTime() - this.LastMessageFinished > TippyPlugin.Config.TipCooldown)
+            else if (this.TippyState == TippyState.Idle && (this.LastMessageFinished == null || DateTime.Now - this.LastMessageFinished > TimeSpan.FromMilliseconds(this.tippyConfig.TipCooldown)))
             {
                 this.SetupNextMessage();
             }
 
             // check if timeout exceeded
             else if ((this.TippyState == TippyState.GivingMessage &&
-                      this.MessageTimer.ElapsedMilliseconds > TippyPlugin.Config.MessageTimeout) || (this.TippyState == TippyState.GivingTip &&
-                     this.MessageTimer.ElapsedMilliseconds > TippyPlugin.Config.TipTimeout))
+                      this.MessageTimer.ElapsedMilliseconds > this.tippyConfig.MessageTimeout) || (this.TippyState == TippyState.GivingTip &&
+                     this.MessageTimer.ElapsedMilliseconds > this.tippyConfig.TipTimeout))
             {
                 this.CloseMessage();
             }
@@ -299,7 +310,13 @@ public class TippyController
             if (this.animationIsFinished) this.SetupNextAnimation(this.CurrentMessage.LoopAnimation);
 
             // get all frames for animation
-            var frames = this.tippyDataList.First(data => data.Type == this.CurrentAnimationType).Frames;
+            var selectedFrame = this.tippyDataList.FirstOrDefault(data => data.Type == this.CurrentAnimationType);
+            if (selectedFrame == null)
+            {
+                selectedFrame = this.tippyDataList.First(data => data.Type == AnimationType.Idle);
+                this.pluginLog.Error("Could not find animation of type " + this.CurrentAnimationType);
+            }
+            var frames = selectedFrame.Frames;
             this.framesCount = frames.Count;
 
             // get current frame
@@ -310,7 +327,7 @@ public class TippyController
             {
                 this.size = ImGuiHelpers.ScaledVector2(this.spriteSize.X, this.spriteSize.Y);
                 this.current = new TippyFrame(this.size, this.uv0, this.uv1, frame.Sound);
-                TippyPlugin.TippyController.PlaySound(this.current.sound);
+                this.PlaySound(this.current.sound);
                 return this.current;
             }
 
@@ -336,7 +353,7 @@ public class TippyController
             this.current = new TippyFrame(this.size, this.uv0, this.uv1, frame.Sound);
 
             // play sound
-            TippyPlugin.TippyController.PlaySound(this.current.sound);
+            this.PlaySound(this.current.sound);
 
             // return animation
             return this.current;
@@ -344,7 +361,7 @@ public class TippyController
         catch (Exception)
         {
             // show previous frame in case something went wrong
-            Logger.LogDebug("Failed frame at index " + this.CurrentFrameIndex + "/" + this.framesCount);
+            this.pluginLog.Verbose("Failed frame at index " + this.CurrentFrameIndex + "/" + this.framesCount);
             this.CurrentFrameIndex = this.framesCount - 1;
             this.animationIsFinished = true;
             return this.current;
@@ -370,7 +387,7 @@ public class TippyController
         }
         catch (Exception ex)
         {
-            Logger.LogError("Failed to dispose tippy controller", ex);
+            this.pluginLog.Error(ex, "Failed to dispose tippy controller");
         }
     }
 
@@ -397,8 +414,8 @@ public class TippyController
         {
             Source = messageSource,
         };
-        TippyPlugin.TippyController.IPCTips.Add(tip);
-        TippyPlugin.TippyController.SetupMessages();
+        this.IPCTips.Add(tip);
+        this.SetupMessages();
         return true;
     }
 
@@ -426,8 +443,7 @@ public class TippyController
     {
         if (this.TippyState == TippyState.GivingTip)
         {
-            TippyPlugin.Config.BannedTipIds.Add(this.CurrentMessage.Id);
-            TippyPlugin.SaveConfig();
+            this.tippyConfig.AddBannedTipId(this.CurrentMessage.Id);
             this.CloseMessage();
         }
     }
@@ -439,7 +455,7 @@ public class TippyController
     public void DebugMessage(AnimationType animationType)
     {
         this.MessageQueue.Clear();
-        TippyPlugin.TippyController.CloseMessage();
+        this.CloseMessage();
         var msg = new Message("Hello! This is a message from Tippy. Please enjoy.", animationType)
         {
             LoopAnimation = true,
@@ -479,8 +495,8 @@ public class TippyController
 
     private void SetMessage(Message message, TippyState tippyState)
     {
-        message.Text = TextHelper.SanitizeText(message.Text);
-        message.Text = TextHelper.WordWrap(message.Text, 30);
+        message.Text = this.textHelperService.SanitizeText(message.Text);
+        message.Text = this.textHelperService.WordWrap(message.Text, 30);
         this.CurrentMessage = message;
         if (this.AnimationQueue.Count > 0)
         {
@@ -531,5 +547,17 @@ public class TippyController
         };
         var index = random.Next(0, tipAnimations.Length);
         return tipAnimations[index];
+    }
+
+    public Task StartAsync(CancellationToken cancellationToken)
+    {
+        this.FrameTimer.Start();
+        return Task.CompletedTask;
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        this.FrameTimer.Stop();
+        return Task.CompletedTask;
     }
 }

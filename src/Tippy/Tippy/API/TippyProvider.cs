@@ -1,8 +1,8 @@
 using System;
 
-using Dalamud.DrunkenToad;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Ipc;
+using Dalamud.Plugin.Services;
 
 namespace Tippy
 {
@@ -30,6 +30,8 @@ namespace Tippy
         /// Register Message.
         /// </summary>
         public const string LabelProviderRegisterMessage = "Tippy.RegisterMessage";
+
+        private readonly IPluginLog pluginLog;
 
         /// <summary>
         /// API.
@@ -61,8 +63,9 @@ namespace Tippy
         /// </summary>
         /// <param name="pluginInterface">plugin interface.</param>
         /// <param name="api">plugin api.</param>
-        public TippyProvider(DalamudPluginInterface pluginInterface, ITippyAPI api)
+        public TippyProvider(IDalamudPluginInterface pluginInterface, IPluginLog pluginLog, ITippyAPI api)
         {
+            this.pluginLog = pluginLog;
             this.API = api;
 
             try
@@ -72,7 +75,7 @@ namespace Tippy
             }
             catch (Exception ex)
             {
-                Logger.LogError($"Error registering IPC provider for {LabelProviderApiVersion}:\n{ex}");
+                pluginLog.Error($"Error registering IPC provider for {LabelProviderApiVersion}:\n{ex}");
             }
 
             try
@@ -82,7 +85,7 @@ namespace Tippy
             }
             catch (Exception ex)
             {
-                Logger.LogError($"Error registering IPC provider for {LabelProviderIsInitialized}:\n{ex}");
+                pluginLog.Error($"Error registering IPC provider for {LabelProviderIsInitialized}:\n{ex}");
             }
 
             try
@@ -92,7 +95,7 @@ namespace Tippy
             }
             catch (Exception e)
             {
-                Logger.LogError($"Error registering IPC provider for {LabelProviderRegisterTip}:\n{e}");
+                pluginLog.Error($"Error registering IPC provider for {LabelProviderRegisterTip}:\n{e}");
             }
 
             try
@@ -102,7 +105,7 @@ namespace Tippy
             }
             catch (Exception e)
             {
-                Logger.LogError($"Error registering IPC provider for {LabelProviderRegisterMessage}:\n{e}");
+                pluginLog.Error($"Error registering IPC provider for {LabelProviderRegisterMessage}:\n{e}");
             }
 
             this.API.IsInitialized = true;

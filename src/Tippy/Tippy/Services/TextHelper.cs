@@ -1,23 +1,30 @@
 using System;
 using System.Text;
+using Dalamud.Plugin;
 
 namespace Tippy;
 
 /// <summary>
 /// Text utility class.
 /// </summary>
-public static class TextHelper
+public class TextHelperService
 {
+    private readonly IDalamudPluginInterface pluginInterface;
+
+    public TextHelperService(IDalamudPluginInterface pluginInterface)
+    {
+        this.pluginInterface = pluginInterface;
+    }
     /// <summary>
     /// Sanitizes text by removing unprintable characters, extra newlines, and reducing length.
     /// </summary>
     /// <param name="text">Text to be sanitized.</param>
     /// <returns>The modified text.</returns>
-    public static string SanitizeText(string text)
+    public string SanitizeText(string text)
     {
         text = text.Replace($"{Environment.NewLine}", " ");
         text = text.Replace("  ", " ");
-        text = TippyPlugin.PluginInterface.Sanitizer.Sanitize(text);
+        text = this.pluginInterface.Sanitizer.Sanitize(text);
         if (text.Length > 200)
         {
             text = text[..200];
@@ -32,7 +39,7 @@ public static class TextHelper
     /// <param name="text">Text to be word wrapped.</param>
     /// <param name="width">Width, in characters, to which the text should be word wrapped.</param>
     /// <returns>The modified text.</returns>
-    public static string WordWrap(string text, int width)
+    public string WordWrap(string text, int width)
     {
         // validate inputs
         if (string.IsNullOrEmpty(text) || width < 1) return text;
@@ -95,7 +102,7 @@ public static class TextHelper
     /// <param name="pos">Index where line of text starts.</param>
     /// <param name="max">Maximum line length.</param>
     /// <returns>The modified line length.</returns>
-    private static int BreakLine(string text, int pos, int max)
+    private int BreakLine(string text, int pos, int max)
     {
         // Find last whitespace in line
         var i = max;
