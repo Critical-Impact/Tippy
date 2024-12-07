@@ -1,8 +1,8 @@
 using System.Linq;
 using System.Numerics;
+
 using CheapLoc;
 using Dalamud.Interface.Colors;
-using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using Tippy.Extensions;
@@ -16,9 +16,9 @@ public class ConfigWindow : Window
 {
     private readonly TippyConfig config;
     private Tab currentTab = Tab.General;
-    private bool isVisible;
 
-    public ConfigWindow(TippyConfig config) : base("Tippy Config")
+    public ConfigWindow(TippyConfig config)
+        : base("Tippy Config")
     {
         this.config = config;
         this.SizeCondition = ImGuiCond.Appearing;

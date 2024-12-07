@@ -1,4 +1,5 @@
 using System;
+
 using CheapLoc;
 using Dalamud.Game.Command;
 using Dalamud.Plugin;
@@ -14,8 +15,9 @@ public class CommandService : IDisposable
     private readonly TippyUI tippyUi;
     private readonly TippyController tippyController;
     private readonly IPluginLog pluginLog;
+    private readonly ConfigWindow configWindow;
 
-    public CommandService(TippyConfig tippyConfig, IDalamudPluginInterface pluginInterface, ICommandManager commandManager, TippyUI tippyUi, TippyController tippyController, IPluginLog pluginLog)
+    public CommandService(TippyConfig tippyConfig, IDalamudPluginInterface pluginInterface, ICommandManager commandManager, TippyUI tippyUi, TippyController tippyController, IPluginLog pluginLog, ConfigWindow configWindow)
     {
         this.tippyConfig = tippyConfig;
         this.pluginInterface = pluginInterface;
@@ -23,6 +25,7 @@ public class CommandService : IDisposable
         this.tippyUi = tippyUi;
         this.tippyController = tippyController;
         this.pluginLog = pluginLog;
+        this.configWindow = configWindow;
         commandManager.AddHandler("/tippy", new CommandInfo(this.ToggleTippy)
         {
             HelpMessage = Loc.Localize("Tippy_Toggle_Command", "Show Tippy."),
@@ -45,9 +48,17 @@ public class CommandService : IDisposable
         });
     }
 
+    public void Dispose()
+    {
+        this.commandManager.RemoveHandler("/tippy");
+        this.commandManager.RemoveHandler("/tippyconfig");
+        this.commandManager.RemoveHandler("/tippysendmsg");
+        this.commandManager.RemoveHandler("/tippysendtip");
+    }
+
     private void ToggleTippyConfig(string command, string arguments)
     {
-        this.tippyUi.ConfigWindow.IsOpen ^= true;
+        this.configWindow.IsOpen ^= true;
     }
 
     private void ToggleTippy(string command, string arguments)
@@ -84,13 +95,5 @@ public class CommandService : IDisposable
         }
 
         if (!result) this.pluginLog.Info("Failed to send Tippy Message.");
-    }
-
-    public void Dispose()
-    {
-        this.commandManager.RemoveHandler("/tippy");
-        this.commandManager.RemoveHandler("/tippyconfig");
-        this.commandManager.RemoveHandler("/tippysendmsg");
-        this.commandManager.RemoveHandler("/tippysendtip");
     }
 }

@@ -1,4 +1,5 @@
 using Dalamud.Plugin.Services;
+using Tippy.Services;
 
 namespace Tippy
 {

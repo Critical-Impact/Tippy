@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
+
 using CheapLoc;
 using DalaMock.Shared.Interfaces;
 using Dalamud.Interface;
@@ -24,16 +25,14 @@ namespace Tippy;
 public class TippyUI : IHostedService, IDisposable
 {
     private readonly ResourceService resourceService;
-    private readonly ConfigWindow configWindow;
 
     /// <summary>
     /// Config window.
     /// </summary>
-    public readonly ConfigWindow ConfigWindow;
+    private readonly ConfigWindow configWindow;
 
     private readonly TippyConfig config;
 
-    private readonly ITextureProvider textureProvider;
     private readonly IUiBuilder uiBuilder;
     private readonly TippyController tippyController;
     private readonly IPluginLog pluginLog;
@@ -41,7 +40,6 @@ public class TippyUI : IHostedService, IDisposable
     private readonly IEnumerable<Window> windows;
     private readonly IWindowSystem windowSystem;
 
-    private readonly TippyPlugin plugin;
     private readonly ISharedImmediateTexture tippyTexture;
     private readonly ISharedImmediateTexture bubbleTexture;
     private readonly string[] debugAnimationNames;
@@ -75,9 +73,8 @@ public class TippyUI : IHostedService, IDisposable
         IWindowSystem windowSystem)
     {
         this.resourceService = resourceService;
-        this.ConfigWindow = configWindow;
+        this.configWindow = configWindow;
         this.config = config;
-        this.textureProvider = textureProvider;
         this.uiBuilder = uiBuilder;
         this.tippyController = tippyController;
         this.pluginLog = pluginLog;
@@ -86,21 +83,19 @@ public class TippyUI : IHostedService, IDisposable
         this.windowSystem = windowSystem;
         this.debugAnimationNames = Enum.GetNames(typeof(AnimationType));
         var spriteTexturePath = this.resourceService.GetResourcePath("map.png");
-        this.tippyTexture = this.textureProvider.GetFromFile(spriteTexturePath);
+        this.tippyTexture = textureProvider.GetFromFile(spriteTexturePath);
         var bubbleTexturePath = this.resourceService.GetResourcePath("bubble.png");
-        this.bubbleTexture = this.textureProvider.GetFromFile(bubbleTexturePath);
-        MicrosoftSansSerifFont = uiBuilder.DefaultFontHandle;
-        MSSansSerifFont = uiBuilder.DefaultFontHandle;
-        // this.MicrosoftSansSerifFont = this.uiBuilder.FontAtlas.NewDelegateFontHandle(
-        //     e => e.OnPreBuild(tk =>
-        //     {
-        //         tk.AddFontFromFile(this.resourceService.GetResourcePath("micross.ttf"), new SafeFontConfig() { SizePx = 14 });
-        //     }));
-        // this.MSSansSerifFont = this.uiBuilder.FontAtlas.NewDelegateFontHandle(
-        //     e => e.OnPreBuild(tk =>
-        //     {
-        //         tk.AddFontFromFile(this.resourceService.GetResourcePath("mssansserif.ttf"), new SafeFontConfig() { SizePx = 14 });
-        //     }));
+        this.bubbleTexture = textureProvider.GetFromFile(bubbleTexturePath);
+        this.MicrosoftSansSerifFont = this.uiBuilder.FontAtlas.NewDelegateFontHandle(
+            e => e.OnPreBuild(tk =>
+            {
+                tk.AddFontFromFile(this.resourceService.GetResourcePath("micross.ttf"), new SafeFontConfig() { SizePx = 14 });
+            }));
+        this.MSSansSerifFont = this.uiBuilder.FontAtlas.NewDelegateFontHandle(
+            e => e.OnPreBuild(tk =>
+            {
+                tk.AddFontFromFile(this.resourceService.GetResourcePath("mssansserif.ttf"), new SafeFontConfig() { SizePx = 14 });
+            }));
     }
 
     private IFontHandle MicrosoftSansSerifFont { get; set; }
@@ -108,6 +103,17 @@ public class TippyUI : IHostedService, IDisposable
     private IFontHandle MSSansSerifFont { get; set; }
 
     private IDisposable? PushedFont { get; set; }
+
+    /// <summary>
+    /// Get button (window) flags.
+    /// </summary>
+    /// <returns>window flags.</returns>
+    public static ImGuiWindowFlags GetButtonFlags()
+    {
+        return ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoResize |
+               ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoFocusOnAppearing | ImGuiWindowFlags.NoScrollbar |
+               ImGuiWindowFlags.NoScrollWithMouse;
+    }
 
     /// <summary>
     /// Get window flags.
@@ -126,15 +132,23 @@ public class TippyUI : IHostedService, IDisposable
         return imGuiWindowFlags;
     }
 
-    /// <summary>
-    /// Get button (window) flags.
-    /// </summary>
-    /// <returns>window flags.</returns>
-    public static ImGuiWindowFlags GetButtonFlags()
+    public Task StartAsync(CancellationToken cancellationToken)
     {
-        return ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoResize |
-               ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoFocusOnAppearing | ImGuiWindowFlags.NoScrollbar |
-               ImGuiWindowFlags.NoScrollWithMouse;
+        foreach (var pluginWindow in this.windows)
+        {
+            this.windowSystem.AddWindow(pluginWindow);
+        }
+
+        this.uiBuilder.Draw += this.Draw;
+        this.uiBuilder.OpenConfigUi += this.OnOpenConfigUi;
+        return Task.CompletedTask;
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        this.uiBuilder.Draw -= this.Draw;
+        this.uiBuilder.OpenConfigUi -= this.OnOpenConfigUi;
+        return Task.CompletedTask;
     }
 
     /// <summary>
@@ -199,7 +213,7 @@ public class TippyUI : IHostedService, IDisposable
         ImGui.PushStyleColor(ImGuiCol.WindowBg, Vector4.Zero);
         ImGui.PushStyleColor(ImGuiCol.Border, Vector4.Zero);
         ImGui.PushStyleColor(ImGuiCol.PopupBg, ImGuiColors.DalamudViolet);
-        ImGui.Begin("###TippyWindow", GetWindowFlags());
+        ImGui.Begin("###TippyWindow", this.GetWindowFlags());
         if (this.config.UseClassicFont)
         {
             this.PushedFont = this.MSSansSerifFont.Push();
@@ -281,7 +295,7 @@ public class TippyUI : IHostedService, IDisposable
                 }
             }
 
-            if (!this.ConfigWindow.IsOpen)
+            if (!this.configWindow.IsOpen)
             {
                 if (ImGui.MenuItem(Loc.Localize("###Tippy_OpenSettings_MenuItem", "Open settings")))
                 {
@@ -341,24 +355,6 @@ public class TippyUI : IHostedService, IDisposable
 
     private void OnOpenConfigUi()
     {
-        this.ConfigWindow.IsOpen ^= true;
-    }
-
-    public Task StartAsync(CancellationToken cancellationToken)
-    {
-        foreach (var pluginWindow in this.windows)
-        {
-            this.windowSystem.AddWindow(pluginWindow);
-        }
-        this.uiBuilder.Draw += this.Draw;
-        this.uiBuilder.OpenConfigUi += this.OnOpenConfigUi;
-        return Task.CompletedTask;
-    }
-
-    public Task StopAsync(CancellationToken cancellationToken)
-    {
-        this.uiBuilder.Draw -= this.Draw;
-        this.uiBuilder.OpenConfigUi -= this.OnOpenConfigUi;
-        return Task.CompletedTask;
+        this.configWindow.IsOpen ^= true;
     }
 }

@@ -25,12 +25,6 @@
           "Microsoft.Extensions.ObjectPool": "9.0.0-preview.6.24328.4"
         }
       },
-      "Dalamud.Loc": {
-        "type": "Direct",
-        "requested": "[1.2.1, )",
-        "resolved": "1.2.1",
-        "contentHash": "zOSjsstzBtgyCyjYbvGHoW+VH4APoivJZiWLaCKGecBqCySC3r2TcYhWt1s7xZLxA39SrsScNagFkPnnv4c8aw=="
-      },
       "DalamudPackager": {
         "type": "Direct",
         "requested": "[11.0.0, )",

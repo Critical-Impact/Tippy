@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+
 using Dalamud.Configuration;
 
 namespace Tippy
@@ -140,18 +141,6 @@ namespace Tippy
             }
         }
 
-        public void AddBannedTipId(string tipId)
-        {
-            this.bannedTipIds.Add(tipId);
-            this.isDirty = true;
-        }
-
-        public void RemoveBannedTipId(string tipId)
-        {
-            this.bannedTipIds.Remove(tipId);
-            this.isDirty = true;
-        }
-
         /// <summary>
         /// Gets or sets list of banned tip ids.
         /// </summary>
@@ -180,6 +169,18 @@ namespace Tippy
         {
             get => this.isDirty;
             set => this.isDirty = value;
+        }
+
+        public void AddBannedTipId(string tipId)
+        {
+            this.bannedTipIds.Add(tipId);
+            this.isDirty = true;
+        }
+
+        public void RemoveBannedTipId(string tipId)
+        {
+            this.bannedTipIds.Remove(tipId);
+            this.isDirty = true;
         }
     }
 }

@@ -6,14 +6,14 @@ using System.Linq;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Dalamud.Interface.Utility;
 using Dalamud.Plugin.Services;
 using Microsoft.Extensions.Hosting;
 using NAudio.Wave;
 using Newtonsoft.Json;
-using Tippy.Services;
 
-namespace Tippy;
+namespace Tippy.Services;
 
 /// <summary>
 /// Tippy animation controller.
@@ -46,6 +46,7 @@ public class TippyController : IHostedService
     /// <param name="pluginLog">dalamuds plugin log.</param>
     /// <param name="jobMonitorService">job monitoring service.</param>
     /// <param name="resourceService">resource service.</param>
+    /// <param name="textHelperService">text helper service.</param>
     public TippyController(JobMonitorService jobMonitorService, ResourceService resourceService, TippyConfig tippyConfig, IPluginLog pluginLog, TextHelperService textHelperService)
     {
         this.jobMonitorService = jobMonitorService;
@@ -59,7 +60,10 @@ public class TippyController : IHostedService
         var json = File.ReadAllText(resourceService.GetResourcePath("agent.json"));
         this.tippyDataList = JsonConvert.DeserializeObject<List<AnimationData>>(json)!;
         this.AnimationQueue.Enqueue(AnimationType.Arrive);
-        for (var i = 0; i < 2; i++) this.AnimationQueue.Enqueue(AnimationType.TapScreen);
+        for (var i = 0; i < 2; i++)
+        {
+            this.AnimationQueue.Enqueue(AnimationType.TapScreen);
+        }
 
         // load messages
         this.SetupMessages(true);
@@ -316,6 +320,7 @@ public class TippyController : IHostedService
                 selectedFrame = this.tippyDataList.First(data => data.Type == AnimationType.Idle);
                 this.pluginLog.Error("Could not find animation of type " + this.CurrentAnimationType);
             }
+
             var frames = selectedFrame.Frames;
             this.framesCount = frames.Count;
 
@@ -463,6 +468,18 @@ public class TippyController : IHostedService
         this.MessageQueue.Enqueue(msg);
     }
 
+    public Task StartAsync(CancellationToken cancellationToken)
+    {
+        this.FrameTimer.Start();
+        return Task.CompletedTask;
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        this.FrameTimer.Stop();
+        return Task.CompletedTask;
+    }
+
     private IEnumerable<Tip> ShuffleTips(IEnumerable<Tip> tips)
     {
         var rnd = new Random();
@@ -547,17 +564,5 @@ public class TippyController : IHostedService
         };
         var index = random.Next(0, tipAnimations.Length);
         return tipAnimations[index];
-    }
-
-    public Task StartAsync(CancellationToken cancellationToken)
-    {
-        this.FrameTimer.Start();
-        return Task.CompletedTask;
-    }
-
-    public Task StopAsync(CancellationToken cancellationToken)
-    {
-        this.FrameTimer.Stop();
-        return Task.CompletedTask;
     }
 }

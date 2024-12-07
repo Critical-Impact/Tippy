@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+
 using Dalamud.Plugin;
 
 namespace Tippy;
@@ -15,6 +16,7 @@ public class TextHelperService
     {
         this.pluginInterface = pluginInterface;
     }
+
     /// <summary>
     /// Sanitizes text by removing unprintable characters, extra newlines, and reducing length.
     /// </summary>
@@ -70,7 +72,7 @@ public class TextHelperService
                     var len = eol - pos;
                     if (len > width)
                     {
-                        len = BreakLine(text, pos, width);
+                        len = this.BreakLine(text, pos, width);
                     }
 
                     sb.Append(text, pos, len);
