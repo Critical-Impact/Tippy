@@ -384,9 +384,11 @@ public class TippyController : IHostedService, IDisposable
     {
         try
         {
-            while (this.isSoundPlaying)
+            var count = 0;
+            while (this.isSoundPlaying && count < 20)
             {
                 Thread.Sleep(100);
+                count++;
             }
 
             this.isSoundPlaying = true;

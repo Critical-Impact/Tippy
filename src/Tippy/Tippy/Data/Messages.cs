@@ -37,7 +37,7 @@ namespace Tippy
 
         public void Dispose()
         {
-            this.translationService.OnNewLanguageLoaded += this.NewLanguageLoaded;
+            this.translationService.OnNewLanguageLoaded -= this.NewLanguageLoaded;
         }
     }
 }
