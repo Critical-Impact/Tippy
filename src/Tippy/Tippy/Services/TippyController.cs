@@ -18,12 +18,14 @@ namespace Tippy.Services;
 /// <summary>
 /// Tippy animation controller.
 /// </summary>
-public class TippyController : IHostedService
+public class TippyController : IHostedService, IDisposable
 {
     private readonly JobMonitorService jobMonitorService;
     private readonly TippyConfig tippyConfig;
     private readonly IPluginLog pluginLog;
     private readonly TextHelperService textHelperService;
+    private readonly Tips tips;
+    private readonly Messages messages;
     private readonly Vector2 spriteSize = new(124, 93);
     private readonly Vector2 sheetSize = new(3348, 3162);
     private readonly List<AnimationData> tippyDataList;
@@ -47,14 +49,16 @@ public class TippyController : IHostedService
     /// <param name="jobMonitorService">job monitoring service.</param>
     /// <param name="resourceService">resource service.</param>
     /// <param name="textHelperService">text helper service.</param>
-    public TippyController(JobMonitorService jobMonitorService, ResourceService resourceService, TippyConfig tippyConfig, IPluginLog pluginLog, TextHelperService textHelperService)
+    /// <param name="tips">tip data.</param>
+    /// <param name="messages">message data.</param>
+    public TippyController(JobMonitorService jobMonitorService, ResourceService resourceService, TippyConfig tippyConfig, IPluginLog pluginLog, TextHelperService textHelperService, Tips tips, Messages messages)
     {
         this.jobMonitorService = jobMonitorService;
         this.tippyConfig = tippyConfig;
         this.pluginLog = pluginLog;
         this.textHelperService = textHelperService;
-        // build tips
-        Tips.BuildAllTips();
+        this.tips = tips;
+        this.messages = messages;
 
         // load animations
         var json = File.ReadAllText(resourceService.GetResourcePath("agent.json"));
@@ -148,19 +152,19 @@ public class TippyController : IHostedService
         // add intro tips
         if (initialLoad && this.tippyConfig.ShowIntroMessages)
         {
-            foreach (var message in Messages.IntroMessages.ToArray())
+            foreach (var message in this.messages.IntroMessages.ToArray())
             {
                 this.MessageQueue.Enqueue(message);
             }
         }
 
         // determine role/job codes
-        IEnumerable<Tip> allTips = Tips.GeneralTips;
+        IEnumerable<Tip> allTips = this.tips.GeneralTips;
         if (this.jobMonitorService.CurrentJobId != 0)
         {
             var jobCode = (JobCode)this.jobMonitorService.CurrentJobId;
             var roleCode = this.jobMonitorService.CurrentRoleId is 2 or 3 ? RoleCode.DPS : (RoleCode)this.jobMonitorService.CurrentRoleId;
-            allTips = allTips.Concat(Tips.RoleTips[roleCode]).Concat(Tips.JobTips[jobCode]);
+            allTips = allTips.Concat(this.tips.RoleTips[roleCode]).Concat(this.tips.JobTips[jobCode]);
         }
 
         // add tips from other plugins if any
@@ -389,6 +393,8 @@ public class TippyController : IHostedService
             this.MessageQueue.Clear();
             this.CloseMessage();
             this.FrameTimer.Stop();
+
+            this.tips.OnTipsChanged -= this.TipsOnOnTipsChanged;
         }
         catch (Exception ex)
         {
@@ -471,13 +477,20 @@ public class TippyController : IHostedService
     public Task StartAsync(CancellationToken cancellationToken)
     {
         this.FrameTimer.Start();
+        this.tips.OnTipsChanged += this.TipsOnOnTipsChanged;
         return Task.CompletedTask;
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
         this.FrameTimer.Stop();
+        this.tips.OnTipsChanged -= this.TipsOnOnTipsChanged;
         return Task.CompletedTask;
+    }
+
+    private void TipsOnOnTipsChanged()
+    {
+        this.SetupMessages();
     }
 
     private IEnumerable<Tip> ShuffleTips(IEnumerable<Tip> tips)

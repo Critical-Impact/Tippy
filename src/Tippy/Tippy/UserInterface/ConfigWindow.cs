@@ -6,6 +6,7 @@ using Dalamud.Interface.Colors;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using Tippy.Extensions;
+using Tippy.Services;
 
 namespace Tippy;
 
@@ -15,12 +16,14 @@ namespace Tippy;
 public class ConfigWindow : Window
 {
     private readonly TippyConfig config;
+    private readonly Tips tips;
     private Tab currentTab = Tab.General;
 
-    public ConfigWindow(TippyConfig config)
+    public ConfigWindow(TippyConfig config, Tips tips)
         : base("Tippy Config")
     {
         this.config = config;
+        this.tips = tips;
         this.SizeCondition = ImGuiCond.Appearing;
         this.Size = new Vector2(300, 300);
     }
@@ -168,7 +171,7 @@ public class ConfigWindow : Window
             ImGui.Spacing();
             foreach (var bannedTipId in this.config.BannedTipIds.ToList())
             {
-                ImGui.Text(Tips.AllTips[bannedTipId].Text);
+                ImGui.Text(this.tips.AllTips[bannedTipId].Text);
                 if (ImGui.IsItemClicked())
                 {
                     this.config.RemoveBannedTipId(bannedTipId);
