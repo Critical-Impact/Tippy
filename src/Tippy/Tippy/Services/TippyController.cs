@@ -77,9 +77,10 @@ public class TippyController : IHostedService, IDisposable
         this.LoadAgent(this.tippyConfig.CurrentAgent, true);
 
         // load messages
-        this.AnimationQueue.Enqueue(this.GetRandomAnimation(AnimationCategory.Arrive));
         this.SetupMessages(true);
         this.SetupNextMessage();
+        this.animationIsFinished = true;
+        this.AnimationQueue.Enqueue(this.GetRandomAnimation(AnimationCategory.Arrive));
     }
 
     private void LoadAgents()

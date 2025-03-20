@@ -53,8 +53,7 @@
             "Searching"
         ],
         "Arrive": [
-            "Greeting",
-            "GetWizardy"
+            "Greeting"
         ],
         "Leave": [
             "Goodbye",
