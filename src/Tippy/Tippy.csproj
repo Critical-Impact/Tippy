@@ -46,79 +46,28 @@
 	</ItemGroup>
 	<ItemGroup>
 		<None Remove="Resource\agent.json" />
-		<EmbeddedResource Include="Resource\agent.json">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</EmbeddedResource>
 		<None Remove="Resource\bubble.png" />
 		<EmbeddedResource Include="Resource\bubble.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</EmbeddedResource>
 		<None Remove="Resource\chord.wav" />
 		<None Remove="Resource\map.png" />
-		<EmbeddedResource Include="Resource\map.png">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</EmbeddedResource>
 		<None Remove="Resource\MS Sans Serif.ttf" />
 		<None Remove="Resource\sound_1.mp3" />
-		<EmbeddedResource Include="Resource\sound_1.mp3">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</EmbeddedResource>
 		<None Remove="Resource\sound_10.mp3" />
-		<EmbeddedResource Include="Resource\sound_10.mp3">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</EmbeddedResource>
 		<None Remove="Resource\sound_11.mp3" />
-		<EmbeddedResource Include="Resource\sound_11.mp3">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</EmbeddedResource>
 		<None Remove="Resource\sound_12.mp3" />
-		<EmbeddedResource Include="Resource\sound_12.mp3">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</EmbeddedResource>
 		<None Remove="Resource\sound_13.mp3" />
-		<EmbeddedResource Include="Resource\sound_13.mp3">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</EmbeddedResource>
 		<None Remove="Resource\sound_14.mp3" />
-		<EmbeddedResource Include="Resource\sound_14.mp3">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</EmbeddedResource>
 		<None Remove="Resource\sound_15.mp3" />
-		<EmbeddedResource Include="Resource\sound_15.mp3">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</EmbeddedResource>
 		<None Remove="Resource\sound_2.mp3" />
-		<EmbeddedResource Include="Resource\sound_2.mp3">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</EmbeddedResource>
 		<None Remove="Resource\sound_3.mp3" />
-		<EmbeddedResource Include="Resource\sound_3.mp3">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</EmbeddedResource>
 		<None Remove="Resource\sound_4.mp3" />
-		<EmbeddedResource Include="Resource\sound_4.mp3">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</EmbeddedResource>
 		<None Remove="Resource\sound_5.mp3" />
-		<EmbeddedResource Include="Resource\sound_5.mp3">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</EmbeddedResource>
 		<None Remove="Resource\sound_6.mp3" />
-		<EmbeddedResource Include="Resource\sound_6.mp3">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</EmbeddedResource>
 		<None Remove="Resource\sound_7.mp3" />
-		<EmbeddedResource Include="Resource\sound_7.mp3">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</EmbeddedResource>
 		<None Remove="Resource\sound_8.mp3" />
-		<EmbeddedResource Include="Resource\sound_8.mp3">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</EmbeddedResource>
 		<None Remove="Resource\sound_9.mp3" />
-		<EmbeddedResource Include="Resource\sound_9.mp3">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</EmbeddedResource>
 		<None Remove="Resource\tada.wav" />
 		<None Remove="Resource\micross.ttf" />
 		<EmbeddedResource Include="Resource\micross.ttf">
@@ -146,5 +95,545 @@
 		<EmbeddedResource Include="Tippy\Resource\translation\ru.json" />
 		<None Remove="Tippy\Resource\translation\zh.json" />
 		<EmbeddedResource Include="Tippy\Resource\translation\zh.json" />
+		<None Remove="Resource\bonzi\agent.json" />
+		<EmbeddedResource Include="Resource\bonzi\agent.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\bonzi\frame_data.json" />
+		<EmbeddedResource Include="Resource\bonzi\frame_data.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\bonzi\map.png" />
+		<EmbeddedResource Include="Resource\bonzi\map.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\bonzi\sound_1.mp3" />
+		<EmbeddedResource Include="Resource\bonzi\sound_1.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\bonzi\sound_2.mp3" />
+		<EmbeddedResource Include="Resource\bonzi\sound_2.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\bonzi\sound_3.mp3" />
+		<EmbeddedResource Include="Resource\bonzi\sound_3.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\bonzi\sound_4.mp3" />
+		<EmbeddedResource Include="Resource\bonzi\sound_4.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\bonzi\sound_5.mp3" />
+		<EmbeddedResource Include="Resource\bonzi\sound_5.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\bonzi\sound_6.mp3" />
+		<EmbeddedResource Include="Resource\bonzi\sound_6.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\bonzi\sound_7.mp3" />
+		<EmbeddedResource Include="Resource\bonzi\sound_7.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\agent.json" />
+		<EmbeddedResource Include="Resource\f1\agent.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\frame_data.json" />
+		<EmbeddedResource Include="Resource\f1\frame_data.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\map.png" />
+		<EmbeddedResource Include="Resource\f1\map.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_1.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_1.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_2.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_2.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_3.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_3.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_4.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_4.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_5.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_5.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_6.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_6.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_7.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_7.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_8.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_8.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_9.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_9.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_10.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_10.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_11.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_11.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_12.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_12.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_13.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_13.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_14.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_14.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_15.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_15.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_16.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_16.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_17.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_17.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_18.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_18.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_19.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_19.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_20.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_20.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_21.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_21.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_22.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_22.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_23.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_23.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_24.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_24.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_25.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_25.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_26.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_26.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_27.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_27.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_28.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_28.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_29.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_29.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_30.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_30.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\f1\sound_31.mp3" />
+		<EmbeddedResource Include="Resource\f1\sound_31.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\agent.json" />
+		<EmbeddedResource Include="Resource\genie\agent.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\frame_data.json" />
+		<EmbeddedResource Include="Resource\genie\frame_data.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\map.png" />
+		<EmbeddedResource Include="Resource\genie\map.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_1.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_1.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_2.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_2.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_3.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_3.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_4.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_4.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_5.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_5.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_6.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_6.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_7.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_7.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_8.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_8.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_9.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_9.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_10.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_10.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_11.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_11.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_12.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_12.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_13.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_13.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_14.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_14.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_15.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_15.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_16.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_16.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_17.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_17.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_18.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_18.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_19.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_19.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_20.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_20.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_21.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_21.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_22.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_22.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_23.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_23.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_24.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_24.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_25.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_25.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_26.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_26.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_27.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_27.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_28.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_28.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_29.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_29.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_30.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_30.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genie\sound_31.mp3" />
+		<EmbeddedResource Include="Resource\genie\sound_31.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genius\agent.json" />
+		<EmbeddedResource Include="Resource\genius\agent.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genius\frame_data.json" />
+		<EmbeddedResource Include="Resource\genius\frame_data.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genius\map.png" />
+		<EmbeddedResource Include="Resource\genius\map.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genius\sound_1.mp3" />
+		<EmbeddedResource Include="Resource\genius\sound_1.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genius\sound_2.mp3" />
+		<EmbeddedResource Include="Resource\genius\sound_2.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genius\sound_3.mp3" />
+		<EmbeddedResource Include="Resource\genius\sound_3.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genius\sound_4.mp3" />
+		<EmbeddedResource Include="Resource\genius\sound_4.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genius\sound_5.mp3" />
+		<EmbeddedResource Include="Resource\genius\sound_5.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genius\sound_6.mp3" />
+		<EmbeddedResource Include="Resource\genius\sound_6.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genius\sound_7.mp3" />
+		<EmbeddedResource Include="Resource\genius\sound_7.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genius\sound_8.mp3" />
+		<EmbeddedResource Include="Resource\genius\sound_8.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genius\sound_9.mp3" />
+		<EmbeddedResource Include="Resource\genius\sound_9.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genius\sound_10.mp3" />
+		<EmbeddedResource Include="Resource\genius\sound_10.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genius\sound_11.mp3" />
+		<EmbeddedResource Include="Resource\genius\sound_11.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genius\sound_12.mp3" />
+		<EmbeddedResource Include="Resource\genius\sound_12.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genius\sound_13.mp3" />
+		<EmbeddedResource Include="Resource\genius\sound_13.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genius\sound_14.mp3" />
+		<EmbeddedResource Include="Resource\genius\sound_14.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genius\sound_15.mp3" />
+		<EmbeddedResource Include="Resource\genius\sound_15.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genius\sound_16.mp3" />
+		<EmbeddedResource Include="Resource\genius\sound_16.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genius\sound_17.mp3" />
+		<EmbeddedResource Include="Resource\genius\sound_17.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genius\sound_18.mp3" />
+		<EmbeddedResource Include="Resource\genius\sound_18.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genius\sound_19.mp3" />
+		<EmbeddedResource Include="Resource\genius\sound_19.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genius\sound_20.mp3" />
+		<EmbeddedResource Include="Resource\genius\sound_20.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genius\sound_21.mp3" />
+		<EmbeddedResource Include="Resource\genius\sound_21.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genius\sound_22.mp3" />
+		<EmbeddedResource Include="Resource\genius\sound_22.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\genius\sound_23.mp3" />
+		<EmbeddedResource Include="Resource\genius\sound_23.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\rover\agent.json" />
+		<EmbeddedResource Include="Resource\rover\agent.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\rover\frame_data.json" />
+		<EmbeddedResource Include="Resource\rover\frame_data.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\rover\map.png" />
+		<EmbeddedResource Include="Resource\rover\map.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\rover\sound_1.mp3" />
+		<EmbeddedResource Include="Resource\rover\sound_1.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\rover\sound_2.mp3" />
+		<EmbeddedResource Include="Resource\rover\sound_2.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\rover\sound_3.mp3" />
+		<EmbeddedResource Include="Resource\rover\sound_3.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\rover\sound_4.mp3" />
+		<EmbeddedResource Include="Resource\rover\sound_4.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\rover\sound_5.mp3" />
+		<EmbeddedResource Include="Resource\rover\sound_5.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\rover\sound_6.mp3" />
+		<EmbeddedResource Include="Resource\rover\sound_6.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\rover\sound_7.mp3" />
+		<EmbeddedResource Include="Resource\rover\sound_7.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\rover\sound_8.mp3" />
+		<EmbeddedResource Include="Resource\rover\sound_8.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\rover\sound_9.mp3" />
+		<EmbeddedResource Include="Resource\rover\sound_9.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\rover\sound_10.mp3" />
+		<EmbeddedResource Include="Resource\rover\sound_10.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\tippy\agent.json" />
+		<EmbeddedResource Include="Resource\tippy\agent.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\tippy\frame_data.json" />
+		<EmbeddedResource Include="Resource\tippy\frame_data.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\tippy\map.png" />
+		<EmbeddedResource Include="Resource\tippy\map.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\tippy\sound_1.mp3" />
+		<EmbeddedResource Include="Resource\tippy\sound_1.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\tippy\sound_2.mp3" />
+		<EmbeddedResource Include="Resource\tippy\sound_2.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\tippy\sound_3.mp3" />
+		<EmbeddedResource Include="Resource\tippy\sound_3.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\tippy\sound_4.mp3" />
+		<EmbeddedResource Include="Resource\tippy\sound_4.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\tippy\sound_5.mp3" />
+		<EmbeddedResource Include="Resource\tippy\sound_5.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\tippy\sound_6.mp3" />
+		<EmbeddedResource Include="Resource\tippy\sound_6.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\tippy\sound_7.mp3" />
+		<EmbeddedResource Include="Resource\tippy\sound_7.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\tippy\sound_8.mp3" />
+		<EmbeddedResource Include="Resource\tippy\sound_8.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\tippy\sound_9.mp3" />
+		<EmbeddedResource Include="Resource\tippy\sound_9.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\tippy\sound_10.mp3" />
+		<EmbeddedResource Include="Resource\tippy\sound_10.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\tippy\sound_11.mp3" />
+		<EmbeddedResource Include="Resource\tippy\sound_11.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\tippy\sound_12.mp3" />
+		<EmbeddedResource Include="Resource\tippy\sound_12.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\tippy\sound_13.mp3" />
+		<EmbeddedResource Include="Resource\tippy\sound_13.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\tippy\sound_14.mp3" />
+		<EmbeddedResource Include="Resource\tippy\sound_14.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<None Remove="Resource\tippy\sound_15.mp3" />
+		<EmbeddedResource Include="Resource\tippy\sound_15.mp3">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
 	</ItemGroup>
 </Project>

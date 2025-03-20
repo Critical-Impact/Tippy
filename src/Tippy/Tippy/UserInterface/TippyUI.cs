@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,8 +25,6 @@ namespace Tippy;
 /// </summary>
 public class TippyUI : IHostedService, IDisposable
 {
-    private readonly ResourceService resourceService;
-
     /// <summary>
     /// Config window.
     /// </summary>
@@ -39,19 +38,18 @@ public class TippyUI : IHostedService, IDisposable
     private readonly JobMonitorService jobMonitorService;
     private readonly IEnumerable<Window> windows;
     private readonly IWindowSystem windowSystem;
+    private readonly IFontService fontService;
 
-    private readonly ISharedImmediateTexture tippyTexture;
-    private readonly ISharedImmediateTexture bubbleTexture;
-    private readonly string[] debugAnimationNames;
+    private string[] debugAnimationNames;
 
     private Vector2 windowSize;
-    private Vector2 contentPos;
     private Vector2 bubbleSize;
-    private Vector2 bubbleOffset;
     private Vector2 bubbleSpeechOffset;
     private Vector2 buttonSize;
     private Vector2 bubbleButtonOffset;
     private Vector2 tippyOffset;
+    private Vector2 agentPos;
+    private Vector2 bubblePos;
     private int debugSelectedAnimationIndex;
     private string debugMessageText = string.Empty;
     private string debugTipText = string.Empty;
@@ -64,15 +62,14 @@ public class TippyUI : IHostedService, IDisposable
         ResourceService resourceService,
         ConfigWindow configWindow,
         TippyConfig config,
-        ITextureProvider textureProvider,
         IUiBuilder uiBuilder,
         TippyController tippyController,
         IPluginLog pluginLog,
         JobMonitorService jobMonitorService,
         IEnumerable<Window> windows,
-        IWindowSystem windowSystem)
+        IWindowSystem windowSystem,
+        IFontService fontService)
     {
-        this.resourceService = resourceService;
         this.configWindow = configWindow;
         this.config = config;
         this.uiBuilder = uiBuilder;
@@ -81,26 +78,16 @@ public class TippyUI : IHostedService, IDisposable
         this.jobMonitorService = jobMonitorService;
         this.windows = windows;
         this.windowSystem = windowSystem;
-        this.debugAnimationNames = Enum.GetNames(typeof(AnimationType));
-        var spriteTexturePath = this.resourceService.GetResourcePath("map.png");
-        this.tippyTexture = textureProvider.GetFromFile(spriteTexturePath);
-        var bubbleTexturePath = this.resourceService.GetResourcePath("bubble.png");
-        this.bubbleTexture = textureProvider.GetFromFile(bubbleTexturePath);
-        this.MicrosoftSansSerifFont = this.uiBuilder.FontAtlas.NewDelegateFontHandle(
-            e => e.OnPreBuild(tk =>
-            {
-                tk.AddFontFromFile(this.resourceService.GetResourcePath("micross.ttf"), new SafeFontConfig() { SizePx = 14 });
-            }));
-        this.MSSansSerifFont = this.uiBuilder.FontAtlas.NewDelegateFontHandle(
-            e => e.OnPreBuild(tk =>
-            {
-                tk.AddFontFromFile(this.resourceService.GetResourcePath("mssansserif.ttf"), new SafeFontConfig() { SizePx = 14 });
-            }));
+        this.fontService = fontService;
+        this.tippyController.OnAgentSwitched += this.AgentSwitched;
+        this.AgentSwitched();
     }
 
-    private IFontHandle MicrosoftSansSerifFont { get; set; }
-
-    private IFontHandle MSSansSerifFont { get; set; }
+    private void AgentSwitched()
+    {
+        this.debugSelectedAnimationIndex = 0;
+        this.debugAnimationNames = this.tippyController.Agent.GetSupportedAnimations().Select(c => c.ToString()).OrderBy(c => c).ToArray();
+    }
 
     private IDisposable? PushedFont { get; set; }
 
@@ -123,7 +110,7 @@ public class TippyUI : IHostedService, IDisposable
     {
         var imGuiWindowFlags = ImGuiWindowFlags.NoTitleBar |
                                ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoFocusOnAppearing |
-                               ImGuiWindowFlags.NoBringToFrontOnFocus;
+                               ImGuiWindowFlags.NoBringToFrontOnFocus | ImGuiWindowFlags.NoScrollbar;
         if (this.config.IsLocked)
         {
             imGuiWindowFlags |= ImGuiWindowFlags.NoMove;
@@ -158,6 +145,7 @@ public class TippyUI : IHostedService, IDisposable
     {
         this.uiBuilder.Draw -= this.Draw;
         this.uiBuilder.OpenConfigUi -= this.OnOpenConfigUi;
+        this.tippyController.OnAgentSwitched -= this.AgentSwitched;
     }
 
     private void Draw()
@@ -188,6 +176,18 @@ public class TippyUI : IHostedService, IDisposable
     {
         // adjust some values for dalamud scaling
         var bubbleHeight = 155;
+        var bubbleWidth = 200;
+
+        var spriteWidth = this.tippyController.Agent.SpriteWidth;
+        var spriteHeight = this.tippyController.Agent.SpriteHeight;
+
+        var paddingWidth = this.tippyController.Agent.PaddingWidth;
+        var paddingHeight = this.tippyController.Agent.PaddingHeight;
+
+        var windowWidth = Math.Max(bubbleWidth, spriteWidth) + paddingWidth;
+
+        var windowHeight = bubbleHeight + spriteHeight + paddingHeight;
+
         var bubbleSpeechOffsetVal = 10;
         if (ImGuiHelpers.GlobalScale is > 1 and < 2)
         {
@@ -196,14 +196,13 @@ public class TippyUI : IHostedService, IDisposable
         }
 
         // set size / pos
-        this.windowSize = ImGuiHelpers.ScaledVector2(220, 280);
-        this.contentPos = ImGuiHelpers.ScaledVector2(120, 105);
-        this.bubbleSize = ImGuiHelpers.ScaledVector2(200, bubbleHeight);
-        this.bubbleOffset = ImGuiHelpers.ScaledVector2(85, bubbleHeight);
+        this.windowSize = ImGuiHelpers.ScaledVector2(windowWidth, windowHeight);
+        this.bubbleSize = ImGuiHelpers.ScaledVector2(bubbleWidth, bubbleHeight);
+        this.agentPos = ImGuiHelpers.ScaledVector2((this.windowSize.X - this.tippyController.Agent.SpriteWidth) / 2.0f, this.windowSize.Y - this.tippyController.Agent.SpriteHeight);
+        this.bubblePos = ImGuiHelpers.ScaledVector2((this.windowSize.X - bubbleWidth) / 2.0f, paddingHeight);
         this.bubbleSpeechOffset = ImGuiHelpers.ScaledVector2(bubbleSpeechOffsetVal, bubbleSpeechOffsetVal);
-        this.bubbleButtonOffset = ImGuiHelpers.ScaledVector2(64, -50);
+        this.bubbleButtonOffset = ImGuiHelpers.ScaledVector2(12, 25);
         this.buttonSize = ImGuiHelpers.ScaledVector2(40, 22);
-        this.tippyOffset = ImGuiHelpers.ScaledVector2(20, 0);
     }
 
     private void StartContainer()
@@ -216,11 +215,11 @@ public class TippyUI : IHostedService, IDisposable
         ImGui.Begin("###TippyWindow", this.GetWindowFlags());
         if (this.config.UseClassicFont)
         {
-            this.PushedFont = this.MSSansSerifFont.Push();
+            this.PushedFont = this.fontService.MSSansSerifFont.Push();
         }
         else
         {
-            this.PushedFont = this.MicrosoftSansSerifFont.Push();
+            this.PushedFont = this.fontService.MicrosoftSansSerifFont.Push();
         }
 
         ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(0, 0, 0, 1));
@@ -228,26 +227,27 @@ public class TippyUI : IHostedService, IDisposable
 
     private void EndContainer()
     {
-        ImGui.End();
-        ImGui.PopStyleColor(4);
+        ImGui.PopStyleColor(1);
         if (this.PushedFont != null)
         {
             this.PushedFont.Dispose();
             this.PushedFont = null;
         }
+        ImGui.End();
+        ImGui.PopStyleColor(3);
     }
 
     private void DrawBubble()
     {
-        ImGui.SetCursorPos(ImGui.GetWindowSize() - this.contentPos - this.bubbleOffset);
-        ImGui.Image(this.bubbleTexture.GetWrapOrEmpty().ImGuiHandle, this.bubbleSize);
-        ImGui.SetCursorPos(ImGui.GetWindowSize() - this.contentPos - this.bubbleOffset + this.bubbleSpeechOffset);
-        ImGui.TextUnformatted(this.tippyController.CurrentMessage.Text);
+        ImGui.SetCursorPos(this.bubblePos);
+        ImGui.Image(this.tippyController.BubbleTexture.GetWrapOrEmpty().ImGuiHandle, this.bubbleSize);
+        ImGui.SetCursorPos(this.bubblePos + this.bubbleSpeechOffset);
+        ImGui.TextUnformatted(this.tippyController.CurrentMessage?.Text ?? string.Empty);
     }
 
     private void DrawBubbleButton()
     {
-        ImGui.SetCursorPos(ImGui.GetWindowSize() - this.contentPos + this.bubbleButtonOffset);
+        ImGui.SetCursorPos(this.bubblePos + this.bubbleSize - this.buttonSize - this.bubbleButtonOffset);
         ImGui.PushStyleColor(ImGuiCol.Button, Vector4.Zero);
         ImGui.PushStyleColor(ImGuiCol.ButtonActive, ImGuiColors.DalamudGrey3);
         ImGui.PushStyleColor(ImGuiCol.ButtonHovered, ImGuiColors.DalamudGrey);
@@ -266,9 +266,32 @@ public class TippyUI : IHostedService, IDisposable
     private void DrawTippy()
     {
         ImGui.BeginGroup();
-        ImGui.SetCursorPos(ImGui.GetWindowSize() - this.contentPos - this.tippyOffset);
+        ImGui.SetCursorPos(this.agentPos);
+
         var frameSpec = this.tippyController.GetTippyFrame();
-        ImGui.Image(this.tippyTexture.GetWrapOrEmpty().ImGuiHandle, frameSpec.size, frameSpec.uv0, frameSpec.uv1);
+        if (frameSpec != null)
+        {
+            foreach (var frame in frameSpec)
+            {
+                if (frame != null)
+                {
+                    ImGui.SetCursorPos(this.agentPos);
+                    if (this.tippyController.TippyTexture.TryGetWrap(out var texture, out _))
+                    {
+                        ImGui.Image(
+                            texture.ImGuiHandle,
+                            frame.size,
+                            frame.uv0,
+                            frame.uv1);
+                        if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
+                        {
+                            this.tippyController.AnimationQueue.Enqueue(this.tippyController.GetRandomAnimation(AnimationCategory.Random));
+                        }
+                    }
+                }
+            }
+        }
+
         ImGui.EndGroup();
         this.DrawTippyMenu();
     }
@@ -329,7 +352,7 @@ public class TippyUI : IHostedService, IDisposable
             ImGui.SameLine();
             if (ImGui.SmallButton("Add"))
             {
-                this.tippyController.DebugMessage((AnimationType)this.debugSelectedAnimationIndex);
+                this.tippyController.DebugMessage(Enum.Parse<AnimationType>(this.debugAnimationNames[this.debugSelectedAnimationIndex]));
             }
 
             ImGui.InputTextWithHint("###SendMessage", "Message Text", ref this.debugMessageText, 200);

@@ -10,16 +10,10 @@ namespace Tippy;
 public class AnimationData
 {
     /// <summary>
-    /// Gets or sets animation type.
-    /// </summary>
-    [JsonProperty("type")]
-    public AnimationType Type { get; set; }
-
-    /// <summary>
     /// Gets or sets animation type name.
     /// </summary>
     [JsonProperty("name")]
-    public string Name { get; set; } = string.Empty;
+    public AnimationType Type { get; set; } = AnimationType.Idle;
 
     /// <summary>
     /// Gets or sets list of frames for animation.

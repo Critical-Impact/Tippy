@@ -3,6 +3,7 @@ using System.Numerics;
 
 using CheapLoc;
 using Dalamud.Interface.Colors;
+using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using Tippy.Extensions;
@@ -17,13 +18,15 @@ public class ConfigWindow : Window
 {
     private readonly TippyConfig config;
     private readonly Tips tips;
+    private readonly TippyController tippyController;
     private Tab currentTab = Tab.General;
 
-    public ConfigWindow(TippyConfig config, Tips tips)
+    public ConfigWindow(TippyConfig config, Tips tips, TippyController tippyController)
         : base("Tippy Config")
     {
         this.config = config;
         this.tips = tips;
+        this.tippyController = tippyController;
         this.SizeCondition = ImGuiCond.Appearing;
         this.Size = new Vector2(300, 300);
     }
@@ -130,6 +133,24 @@ public class ConfigWindow : Window
         if (ImGui.Checkbox(Loc.Localize("###Tippy_ShowDebugWindow_Checkbox", "Show Debug Window"), ref showDebugWindow))
         {
             this.config.ShowDebugWindow = showDebugWindow;
+        }
+
+        var currentAgent = this.config.CurrentAgent;
+
+        var currentAgentName = Loc.Localize("Agent_" + currentAgent, currentAgent.ToTitleCase());
+
+        using (var combo = ImRaii.Combo("Agent", currentAgentName))
+        {
+            if (combo.Success)
+            {
+                foreach (var agent in this.tippyController.AvailableAgents.OrderBy(c => c))
+                {
+                    if (ImGui.Selectable(Loc.Localize("Agent_" + agent, agent.ToTitleCase()), currentAgent == agent))
+                    {
+                        this.tippyController.SwitchAgent(agent);
+                    }
+                }
+            }
         }
     }
 

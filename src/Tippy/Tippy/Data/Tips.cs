@@ -40,30 +40,30 @@ public class Tips : IDisposable
     {
         this.GeneralTips =
         [
-            new Tip("GEN-000001", CheapLoc.Loc.Localize("GEN-000001", "Vuln stacks really don't affect damage you receive by that much, so ignore any healer that complains about you not doing mechanics correctly."), AnimationType.Checkmark),
-            new Tip("GEN-000002", CheapLoc.Loc.Localize("GEN-000002", "Wiping the party is an excellent method to clear away bad status effects, including death."), AnimationType.Checkmark),
-            new Tip("GEN-000003", CheapLoc.Loc.Localize("GEN-000003", "Players in your party do not pay your sub. Play the game however you like and report harassment."), AnimationType.Checkmark),
+            new Tip("GEN-000001", CheapLoc.Loc.Localize("GEN-000001", "Vuln stacks really don't affect damage you receive by that much, so ignore any healer that complains about you not doing mechanics correctly."), AnimationCategory.Sad),
+            new Tip("GEN-000002", CheapLoc.Loc.Localize("GEN-000002", "Wiping the party is an excellent method to clear away bad status effects, including death."), AnimationCategory.Sad),
+            new Tip("GEN-000003", CheapLoc.Loc.Localize("GEN-000003", "Players in your party do not pay your sub. Play the game however you like and report harassment."), AnimationCategory.Attention),
             new Tip("GEN-000004", CheapLoc.Loc.Localize("GEN-000004", "In a big pull, always use the ability with the highest potency number on your bar.")),
-            new Tip("GEN-000005", CheapLoc.Loc.Localize("GEN-000005", "Make sure to avoid the stack marker so that your healers have less people to heal during raids!"), AnimationType.PaperAirplane),
-            new Tip("GEN-000006", CheapLoc.Loc.Localize("GEN-000006", "Put macro'd dialogue on all of your attacks as a tank to also gain enmity from your party members."), AnimationType.Writing),
-            new Tip("GEN-000007", CheapLoc.Loc.Localize("GEN-000007", "Make sure to save your LB until the boss is at 1 pct. This will lead to the greatest effect."), AnimationType.Box),
+            new Tip("GEN-000005", CheapLoc.Loc.Localize("GEN-000005", "Make sure to avoid the stack marker so that your healers have less people to heal during raids!"), AnimationCategory.Random),
+            new Tip("GEN-000006", CheapLoc.Loc.Localize("GEN-000006", "Put macro'd dialogue on all of your attacks as a tank to also gain enmity from your party members."), AnimationCategory.Random),
+            new Tip("GEN-000007", CheapLoc.Loc.Localize("GEN-000007", "Make sure to save your LB until the boss is at 1 pct. This will lead to the greatest effect."), AnimationCategory.Random),
             new Tip("GEN-000008", CheapLoc.Loc.Localize("GEN-000008", "If you want to leave your party quickly and blame disconnect, just change your PC time!")),
-            new Tip("GEN-000009", CheapLoc.Loc.Localize("GEN-000009", "I will never leave you!"), AnimationType.PaperAirplane),
-            new Tip("GEN-000010", CheapLoc.Loc.Localize("GEN-000010", "You cannot hide any longer.")),
-            new Tip("GEN-000011", CheapLoc.Loc.Localize("GEN-000011", "Powered by XIVLauncher!")),
+            new Tip("GEN-000009", CheapLoc.Loc.Localize("GEN-000009", "I will never leave you!"), AnimationCategory.Happy),
+            new Tip("GEN-000010", CheapLoc.Loc.Localize("GEN-000010", "You cannot hide any longer."), AnimationCategory.Searching),
+            new Tip("GEN-000011", CheapLoc.Loc.Localize("GEN-000011", "Powered by XIVLauncher!"), AnimationCategory.Gesture),
             new Tip("GEN-000012", CheapLoc.Loc.Localize("GEN-000012", "When playing Hunter, specialize your pet into taunting to help out your tank!")),
-            new Tip("GEN-000013", CheapLoc.Loc.Localize("GEN-000013", "It doesn't matter if you play BRD or MCH, it comes down to personal choice!"), AnimationType.Checkmark),
-            new Tip("GEN-000014", CheapLoc.Loc.Localize("GEN-000014", "This text is powered by duck energy!"), AnimationType.Snooze),
+            new Tip("GEN-000013", CheapLoc.Loc.Localize("GEN-000013", "It doesn't matter if you play BRD or MCH, it comes down to personal choice!"), AnimationCategory.Happy),
+            new Tip("GEN-000014", CheapLoc.Loc.Localize("GEN-000014", "This text is powered by duck energy!"), AnimationCategory.Idle),
             new Tip("GEN-000015", CheapLoc.Loc.Localize("GEN-000015", "Goat is my original developer, so you can blame him for this.")),
             new Tip("GEN-000016", CheapLoc.Loc.Localize("GEN-000016", "Did you know you can get through queue faster by hitting cancel?")),
             new Tip("GEN-000017", CheapLoc.Loc.Localize("GEN-000017", "You do more damage if you're wearing casual attire.")),
             new Tip("GEN-000018", CheapLoc.Loc.Localize("GEN-000018", "Don't worry about damage downs, it just shows you are focusing on the boss.")),
-            new Tip("GEN-000019", CheapLoc.Loc.Localize("GEN-000019", "I've seen you ERPing... Extreme Raid Progression can be fun."), AnimationType.Read),
-            new Tip("GEN-000020", CheapLoc.Loc.Localize("GEN-000020", "It seems like you are parsing grey. You should check out the official job guide to play better."), AnimationType.Read),
+            new Tip("GEN-000019", CheapLoc.Loc.Localize("GEN-000019", "I've seen you ERPing... Extreme Raid Progression can be fun."), AnimationCategory.Searching),
+            new Tip("GEN-000020", CheapLoc.Loc.Localize("GEN-000020", "It seems like you are parsing grey. You should check out the official job guide to play better."), AnimationCategory.Searching),
             new Tip("GEN-000021", CheapLoc.Loc.Localize("GEN-000021", "Why doesn't Cid ever use steel? Because iron works.")),
             new Tip("GEN-000022", CheapLoc.Loc.Localize("GEN-000022", "Why do FFXIV players always have broken down cars? They don't know any mechanics.")),
             new Tip("GEN-000023", CheapLoc.Loc.Localize("GEN-000023", "What do moogles use when they go shopping? Kupons.")),
-            new Tip("GEN-000024", CheapLoc.Loc.Localize("GEN-000024", "What's Twintania's favorite party game? Twister."), AnimationType.WindChimes),
+            new Tip("GEN-000024", CheapLoc.Loc.Localize("GEN-000024", "What's Twintania's favorite party game? Twister."), AnimationCategory.Random),
             new Tip("GEN-000025", CheapLoc.Loc.Localize("GEN-000025", "Why did the Sahagin cross the waves? To get to the other tide.")),
             new Tip("GEN-000026", CheapLoc.Loc.Localize("GEN-000026", "What do you call a poor Lala? A little short.")),
             new Tip("GEN-000027", CheapLoc.Loc.Localize("GEN-000027", "What do people do when they are cold? They Shiva."))
@@ -74,10 +74,10 @@ public class Tips : IDisposable
         {
             [RoleCode.TANK] =
             [
-                new Tip("TANK-000001", RoleCode.TANK, CheapLoc.Loc.Localize("TANK-000001", "Always save your cooldowns for boss fights."), AnimationType.Box),
+                new Tip("TANK-000001", RoleCode.TANK, CheapLoc.Loc.Localize("TANK-000001", "Always save your cooldowns for boss fights."), AnimationCategory.Attention),
                 new Tip("TANK-000002", RoleCode.TANK, CheapLoc.Loc.Localize("TANK-000002", "Piety matters as much as tenacity.")),
                 new Tip("TANK-000003", RoleCode.TANK, CheapLoc.Loc.Localize("TANK-000003", "Meld piety to maximize your DPS.")),
-                new Tip("TANK-000004", RoleCode.TANK, CheapLoc.Loc.Localize("TANK-000004", "Let your party know... you pull you tank!"), AnimationType.Exclamation)
+                new Tip("TANK-000004", RoleCode.TANK, CheapLoc.Loc.Localize("TANK-000004", "Let your party know... you pull you tank!"), AnimationCategory.Attention)
             ],
             [RoleCode.HEAL] =
             [
@@ -87,7 +87,7 @@ public class Tips : IDisposable
             ],
             [RoleCode.DPS] =
             [
-                new Tip("DPS-000001", RoleCode.DPS, CheapLoc.Loc.Localize("DPS-000001", "If you're feeling lazy, just let your party pick up the slack. They won't mind."), AnimationType.Snooze)
+                new Tip("DPS-000001", RoleCode.DPS, CheapLoc.Loc.Localize("DPS-000001", "If you're feeling lazy, just let your party pick up the slack. They won't mind."), AnimationCategory.Sad)
             ],
             [RoleCode.DOHL] =
             [
@@ -159,7 +159,7 @@ public class Tips : IDisposable
             ],
             [JobCode.BRD] =
             [
-                 new Tip("BRD-000001", JobCode.BRD, CheapLoc.Loc.Localize("BRD-000001", "Use macros so you can add song lyrics to your music!"), AnimationType.Headphones)
+                 new Tip("BRD-000001", JobCode.BRD, CheapLoc.Loc.Localize("BRD-000001", "Use macros so you can add song lyrics to your music!"), AnimationCategory.Random)
             ],
             [JobCode.WHM] =
             [
@@ -211,7 +211,7 @@ public class Tips : IDisposable
             [JobCode.RDM] = [],
             [JobCode.BLU] =
             [
-                 new Tip("BLU-000001", JobCode.BLU, CheapLoc.Loc.Localize("BLU-000001", "Did you know that Blue Mage is throwaway content?"), AnimationType.TrashTornado)
+                 new Tip("BLU-000001", JobCode.BLU, CheapLoc.Loc.Localize("BLU-000001", "Did you know that Blue Mage is throwaway content?"), AnimationCategory.Random)
             ],
             [JobCode.GNB] =
             [

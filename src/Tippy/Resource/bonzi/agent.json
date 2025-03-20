@@ -1,0 +1,59 @@
+{
+    "SpriteWidth" : 200,
+    "SpriteHeight" : 160,
+    "SheetWidth" : 3400,
+    "SheetHeight" : 3360,
+    "PaddingWidth" : 40,
+    "PaddingHeight" : 42,
+    "SoundCount" : 7,
+    "Animations" :{
+        "Still": ["Still"],
+        "Idle": [
+            "Idle1_1",
+            "Idle1_2",
+            "Idle1_3",
+            "Idle1_4",
+            "Idle1_5",
+            "Idle1_6",
+            "Idle2_1",
+            "Still"
+        ],
+        "Gesture": [
+            "GestureDown",
+            "GestureLeft",
+            "GestureRight",
+            "GestureUp"
+        ],
+        "Attention": [
+            "GetAttention",
+            "GetAttention2"
+        ],
+        "Sad": [
+            "Sad"
+        ],
+        "Happy": [
+            "Acknowledge",
+            "Congratulate",
+            "Pleased",
+            "Wave"
+        ],
+        "Searching": [
+            "Search",
+            "Searching"
+        ],
+        "Arrive": [
+            "Show",
+            "Greet"
+        ],
+        "Leave": [
+            "Hide"
+        ],
+        "Random": [
+            "Confused",
+            "Explain",
+            "Suggest",
+            "Think",
+            "Uncertain"
+        ]
+    }
+}

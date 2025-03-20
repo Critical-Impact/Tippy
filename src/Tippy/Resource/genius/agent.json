@@ -1,0 +1,69 @@
+{
+    "SpriteWidth" : 124,
+    "SpriteHeight" : 93,
+    "SheetWidth" : 2852,
+    "SheetHeight" : 2883,
+    "PaddingWidth" : 40,
+    "PaddingHeight" : 42,
+    "SoundCount" : 0,
+    "Animations": {
+        "Still": [
+            "Still"
+        ],
+        "Idle": [
+            "Idle0",
+            "Idle1",
+            "Idle1_1",
+            "Idle2",
+            "Idle3",
+            "Idle4",
+            "Idle5",
+            "Idle6",
+            "Idle7",
+            "Idle8",
+            "Idle9",
+            "DeepIdle1",
+            "Still"
+        ],
+        "Gesture": [
+            "GestureDown",
+            "GestureLeft",
+            "GestureRight",
+            "GestureUp"
+        ],
+        "Attention": [
+            "GetAttention"
+        ],
+        "Sad": [
+            "EmptyTrash",
+            "Goodbye",
+            "Hide"
+        ],
+        "Happy": [
+            "GetWizardy",
+            "Congratulate"
+        ],
+        "Searching": [
+            "CheckingSomething",
+            "Processing",
+            "Searching"
+        ],
+        "Arrive": [
+            "Greeting"
+        ],
+        "Leave": [
+            "Goodbye"
+        ],
+        "Random": [
+            "Wave",
+            "Hearing_1",
+            "GetTechy",
+            "GetArtsy",
+            "Print",
+            "Save",
+            "SendMail",
+            "Thinking",
+            "Writing"
+        ]
+    }
+}

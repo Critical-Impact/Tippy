@@ -43,6 +43,7 @@ public class TippyPlugin : HostedPlugin
         containerBuilder.RegisterType<TippyProvider>().AsSelf().SingleInstance();
         containerBuilder.RegisterType<TextHelperService>().AsSelf().SingleInstance();
         containerBuilder.RegisterType<TranslationService>().AsSelf().SingleInstance();
+        containerBuilder.RegisterType<FontService>().AsImplementedInterfaces().SingleInstance();
 
         // Data
         containerBuilder.RegisterType<Messages>().AsSelf().SingleInstance();

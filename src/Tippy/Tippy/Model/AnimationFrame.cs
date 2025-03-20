@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace Tippy;
@@ -24,4 +27,43 @@ public class AnimationFrame
     /// </summary>
     [JsonProperty("sound")]
     public int Sound { get; set; }
+
+    [JsonProperty("exitBranch")]
+    public int ExitBranch { get; set; }
+
+
+    [JsonProperty("branching")]
+    public AnimationFrameBranching? Branching { get; set; }
 }
+
+
+public class AnimationFrameBranching
+{
+    private static readonly Random Random = new();
+
+    [JsonProperty("branches")]
+    public List<AnimationBranch>? Branches { get; set; }
+
+    public AnimationBranch? PickNextBranch()
+    {
+        if (this.Branches == null || this.Branches.Count == 0)
+        {
+            return null;
+        }
+
+        int randomValue = Random.Next(0, 100);
+
+        foreach (var branch in this.Branches)
+        {
+            if (randomValue <= branch.Weight)
+            {
+                return branch;
+            }
+
+            randomValue -= branch.Weight;
+        }
+
+        return null;
+    }
+}
+

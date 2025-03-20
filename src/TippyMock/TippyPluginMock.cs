@@ -24,7 +24,7 @@ public class TippyPluginMock(
     pluginInterface,
     pluginLog,
     commandManager,
-    clientState, 
+    clientState,
     framework,
     textureProvider)
 {
@@ -35,6 +35,7 @@ public class TippyPluginMock(
         containerBuilder.RegisterType<MockFileDialogManager>().AsSelf().As<IFileDialogManager>().SingleInstance();
         containerBuilder.RegisterType<MockFont>().AsSelf().As<IFont>().SingleInstance();
         containerBuilder.RegisterType<MockWindow>().AsSelf().As<Window>().SingleInstance();
+        containerBuilder.RegisterType<MockFontService>().AsImplementedInterfaces().SingleInstance();
     }
 
     public override void ConfigureServices(IServiceCollection serviceCollection)

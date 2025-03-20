@@ -21,6 +21,7 @@ namespace Tippy
         private int messageTimeout = 5000;
         private List<string> bannedTipIds = new();
         private int version;
+        private string currentAgent = "tippy";
 
         /// <summary>
         /// Gets or sets a value indicating whether tippy is enabled or not.
@@ -169,6 +170,16 @@ namespace Tippy
         {
             get => this.isDirty;
             set => this.isDirty = value;
+        }
+
+        public string CurrentAgent
+        {
+            get => this.currentAgent;
+            set
+            {
+                this.currentAgent = value;
+                this.IsDirty = true;
+            }
         }
 
         public void AddBannedTipId(string tipId)

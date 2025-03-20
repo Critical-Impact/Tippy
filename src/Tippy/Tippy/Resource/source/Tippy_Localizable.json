@@ -418,5 +418,29 @@
     "###Tippy_OpenSettings_MenuItem": {
         "message": "Open settings",
         "description": "TippyUI.DrawTippyMenu"
+    },
+    "Agent_tippy": {
+        "message": "Tippy",
+        "description": "ConfigWindow.DrawGeneral"
+    },
+    "Agent_bonzi": {
+        "message": "Bonzi",
+        "description": "ConfigWindow.DrawGeneral"
+    },
+    "Agent_f1": {
+        "message": "F1",
+        "description": "ConfigWindow.DrawGeneral"
+    },
+    "Agent_genie": {
+        "message": "Genie",
+        "description": "ConfigWindow.DrawGeneral"
+    },
+    "Agent_genius": {
+        "message": "Genius",
+        "description": "ConfigWindow.DrawGeneral"
+    },
+    "Agent_rover": {
+        "message": "Rover",
+        "description": "ConfigWindow.DrawGeneral"
     }
 }

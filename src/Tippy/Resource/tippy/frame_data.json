@@ -1,5 +1,19 @@
 [
     {
+        "type": 13,
+        "name": "Still",
+        "frames": [
+            {
+                "images": [
+                    0,
+                    0
+                ],
+                "duration": 100,
+                "sound": 0
+            }
+        ]
+    },
+    {
         "type": 0,
         "name": "Headphones",
         "frames": [

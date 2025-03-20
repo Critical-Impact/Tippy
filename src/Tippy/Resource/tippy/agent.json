@@ -1,0 +1,21 @@
+{
+    "SpriteWidth" : 124,
+    "SpriteHeight" : 93,
+    "SheetWidth" : 3348,
+    "SheetHeight" : 3162,
+    "PaddingWidth" : 40,
+    "PaddingHeight" : 42,
+    "SoundCount" : 0,
+    "Animations" :{
+        "Still" : ["Idle"],
+        "Idle" : ["Headphones", "Idle", "PaperAirplane", "Read"],
+        "Gesture" : ["GestureDown", "GestureLeft", "GestureRight", "GestureUp"],
+        "Attention" : ["Exclamation", "TapScreen"],
+        "Sad" : ["RopePile", "ScratchHead", "Snooze", "TrashTornado"],
+        "Happy" : ["Checkmark", "WindChimes", "Writing"],
+        "Searching" : ["Searching"],
+        "Arrive" : ["Arrive"],
+        "Leave" : ["Leave"],
+        "Random" : ["Atomic", "Box", "Print", "Shovel"]
+    }
+}

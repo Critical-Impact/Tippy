@@ -6,7 +6,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
-
+using Dalamud.Interface.Textures;
 using Dalamud.Interface.Utility;
 using Dalamud.Plugin.Services;
 using Microsoft.Extensions.Hosting;
@@ -21,29 +21,36 @@ namespace Tippy.Services;
 public class TippyController : IHostedService, IDisposable
 {
     private readonly JobMonitorService jobMonitorService;
+    private readonly ResourceService resourceService;
+    private readonly ITextureProvider textureProvider;
     private readonly TippyConfig tippyConfig;
     private readonly IPluginLog pluginLog;
     private readonly TextHelperService textHelperService;
     private readonly Tips tips;
     private readonly Messages messages;
-    private readonly Vector2 spriteSize = new(124, 93);
-    private readonly Vector2 sheetSize = new(3348, 3162);
-    private readonly List<AnimationData> tippyDataList;
-    // ReSharper disable once CollectionNeverQueried.Local
-    private readonly Dictionary<int, string> sounds = new();
-    private TippyFrame current = null!;
+    private List<AnimationData> tippyDataList;
+
+    private string? newAgent;
+    private bool? oldAgentLeft;
+    private TippyFrame?[] current;
     private bool animationIsFinished;
     private Vector2 size;
-    private Vector2 coords;
-    private Vector2 uv0;
-    private Vector2 uv1;
+    private Vector2?[] coords;
+    private Vector2?[] uv0;
+    private Vector2?[] uv1;
     private bool isSoundPlaying;
     private int framesCount;
+    private Random random;
+
+    public delegate void AgentSwitchedDelegate();
+
+    public event AgentSwitchedDelegate? OnAgentSwitched;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TippyController"/> class.
     /// </summary>
     /// <param name="plugin">plugin.</param>
+    /// <param name="textureProvider">texture provider.</param>
     /// <param name="tippyConfig">tippy's configuration.</param>
     /// <param name="pluginLog">dalamuds plugin log.</param>
     /// <param name="jobMonitorService">job monitoring service.</param>
@@ -51,39 +58,120 @@ public class TippyController : IHostedService, IDisposable
     /// <param name="textHelperService">text helper service.</param>
     /// <param name="tips">tip data.</param>
     /// <param name="messages">message data.</param>
-    public TippyController(JobMonitorService jobMonitorService, ResourceService resourceService, TippyConfig tippyConfig, IPluginLog pluginLog, TextHelperService textHelperService, Tips tips, Messages messages)
+    public TippyController(JobMonitorService jobMonitorService, ResourceService resourceService, ITextureProvider textureProvider, TippyConfig tippyConfig, IPluginLog pluginLog, TextHelperService textHelperService, Tips tips, Messages messages)
     {
         this.jobMonitorService = jobMonitorService;
+        this.resourceService = resourceService;
+        this.textureProvider = textureProvider;
         this.tippyConfig = tippyConfig;
         this.pluginLog = pluginLog;
         this.textHelperService = textHelperService;
         this.tips = tips;
         this.messages = messages;
+        this.random = new Random();
+        this.coords = new Vector2?[5];
+        this.uv0 = new Vector2?[5];
+        this.uv1 = new Vector2?[5];
 
-        // load animations
-        var json = File.ReadAllText(resourceService.GetResourcePath("agent.json"));
-        this.tippyDataList = JsonConvert.DeserializeObject<List<AnimationData>>(json)!;
-        this.AnimationQueue.Enqueue(AnimationType.Arrive);
-        for (var i = 0; i < 2; i++)
-        {
-            this.AnimationQueue.Enqueue(AnimationType.TapScreen);
-        }
+        this.LoadAgents();
+        this.LoadAgent(this.tippyConfig.CurrentAgent, true);
 
         // load messages
+        this.AnimationQueue.Enqueue(this.GetRandomAnimation(AnimationCategory.Arrive));
         this.SetupMessages(true);
         this.SetupNextMessage();
+    }
 
-        // set sounds
-        for (var i = 1; i < 16; i++)
+    private void LoadAgents()
+    {
+        var agents = new List<string>();
+        var resourcePath = this.resourceService.GetResourcePath(string.Empty);
+        var resourceDirectory = new DirectoryInfo(resourcePath);
+        foreach (var directory in resourceDirectory.EnumerateDirectories())
         {
-            this.sounds.Add(i, resourceService.GetResourcePath($"sound_{i}.mp3"));
+            if (directory.GetFiles("agent.json").Length != 0)
+            {
+                agents.Add(directory.Name);
+            }
         }
+
+        this.AvailableAgents = agents;
+    }
+
+    private void LoadAgent(string agentName, bool initialLoad = false)
+    {
+        var agentPath = this.resourceService.GetResourcePath(agentName);
+
+        var frameJson = File.ReadAllText(Path.Combine(agentPath, "frame_data.json"));
+        var agentJson = File.ReadAllText(Path.Combine(agentPath, "agent.json"));
+        var spriteTexturePath = Path.Combine(agentPath, "map.png");
+        var bubbleTexturePath = this.resourceService.GetResourcePath("bubble.png");
+        var animationData = JsonConvert.DeserializeObject<List<AnimationData>>(frameJson)!;
+        var agentData = JsonConvert.DeserializeObject<TippyAgent>(agentJson)!;
+        var agentSounds = new Dictionary<int, string>();
+        for (var i = 1; i < agentData.SoundCount; i++)
+        {
+            agentSounds.Add(i, this.resourceService.GetResourcePath(Path.Join(agentName, $"sound_{i}.mp3")));
+        }
+
+        agentData.Sounds = agentSounds;
+        var supportedTypes = new HashSet<AnimationType>();
+        animationData = animationData.Where(c =>
+        {
+            if (c.Frames.Count == 0)
+            {
+                return false;
+            }
+
+            if (c.Frames.Count == 1 && c.Type != AnimationType.Still)
+            {
+                if (c.Frames[0].Images.Length == 0)
+                {
+                    this.pluginLog.Verbose($"{c.Type} has frame count of 0 in agent {agentName}");
+                    return false;
+                }
+
+                if (c.Frames[0].Images.Length < 2 || (c.Frames[0].Images[0] == 0 && c.Frames[0].Images[1] == 0))
+                {
+                    this.pluginLog.Verbose($"{c.Type} has blank frames in agent {agentName} and is not still animation type.");
+                    return false;
+                }
+            }
+
+            supportedTypes.Add(c.Type);
+            return true;
+        }).ToList();
+
+        agentData.Animations = agentData.Animations.ToDictionary(c => c.Key, c => c.Value.Where(d => supportedTypes.Contains(d)).ToList());
+
+        this.TippyTexture = this.textureProvider.GetFromFile(spriteTexturePath);
+        this.BubbleTexture = this.textureProvider.GetFromFile(bubbleTexturePath);
+        this.tippyDataList = animationData;
+        this.Agent = agentData;
+        this.CurrentFrameIndex = 0;
+        this.current = new TippyFrame[5];
+        this.TippyState = TippyState.Idle;
+
+        if (!initialLoad)
+        {
+            this.CloseMessage();
+            this.CurrentFrameIndex = 0;
+            this.AnimationQueue.Clear();
+            this.AnimationQueue.Enqueue(this.GetRandomAnimation(AnimationCategory.Arrive));
+            this.SetupNextAnimation();
+        }
+    }
+
+    public void SwitchAgent(string agentName)
+    {
+        this.tippyConfig.CurrentAgent = agentName;
+        this.newAgent = agentName;
     }
 
     /// <summary>
     /// Gets or sets get current message.
     /// </summary>
-    public Message CurrentMessage { get; set; } = null!;
+    public Message? CurrentMessage { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether job changed.
@@ -139,6 +227,26 @@ public class TippyController : IHostedService, IDisposable
     /// Gets or sets get tippy state.
     /// </summary>
     public TippyState TippyState { get; set; } = TippyState.NotStarted;
+
+    /// <summary>
+    /// The texture for the agent.
+    /// </summary>
+    public ISharedImmediateTexture TippyTexture { get; set; }
+
+    /// <summary>
+    /// The texture for the bubble that the text sits inside.
+    /// </summary>
+    public ISharedImmediateTexture BubbleTexture { get; set; }
+
+    /// <summary>
+    /// The active agent.
+    /// </summary>
+    public TippyAgent Agent { get; set; }
+
+    /// <summary>
+    /// A list of available agents.
+    /// </summary>
+    public List<string> AvailableAgents { get; set; }
 
     /// <summary>
     /// Setup tips on load or if job changes.
@@ -199,7 +307,7 @@ public class TippyController : IHostedService, IDisposable
     /// <returns>indicator whether able to block tip..</returns>
     public bool CanBlockTip()
     {
-        return this.TippyState is TippyState.GivingTip && this.CurrentMessage.Source == MessageSource.Default;
+        return this.TippyState is TippyState.GivingTip && this.CurrentMessage?.Source == MessageSource.Default;
     }
 
     /// <summary>
@@ -219,7 +327,20 @@ public class TippyController : IHostedService, IDisposable
         this.MessageTimer.Stop();
         this.TippyState = TippyState.Idle;
         this.LastMessageFinished = DateTime.Now;
-        this.CurrentAnimationType = AnimationType.Idle;
+    }
+
+    public AnimationType GetRandomAnimation(AnimationCategory category)
+    {
+        var idleAnimations = this.Agent.GetAnimations(category);
+        var index = this.random.Next(idleAnimations.Count);
+        return idleAnimations[index];
+    }
+
+    public AnimationType GetRandomAnimation()
+    {
+        var idleAnimations = this.Agent.Animations.SelectMany(c => c.Value).ToList();
+        var index = this.random.Next(idleAnimations.Count);
+        return idleAnimations[index];
     }
 
     /// <summary>
@@ -236,7 +357,12 @@ public class TippyController : IHostedService, IDisposable
             WaveStream reader;
             try
             {
-                reader = new MediaFoundationReader(this.sounds[num]);
+                if (!this.Agent.Sounds.TryGetValue(num, out var sound))
+                {
+                    this.pluginLog.Error($"Could not find sound {num}");
+                    return;
+                }
+                reader = new MediaFoundationReader(sound);
             }
             catch (Exception ex)
             {
@@ -259,6 +385,7 @@ public class TippyController : IHostedService, IDisposable
                 {
                     output.Init(channel);
                     output.Play();
+                    this.pluginLog.Verbose($"Playing sound {num}");
 
                     while (output.PlaybackState == PlaybackState.Playing)
                     {
@@ -281,10 +408,39 @@ public class TippyController : IHostedService, IDisposable
     /// Draw tippy animation.
     /// </summary>
     /// <returns>animation spec for imgui.</returns>
-    public TippyFrame GetTippyFrame()
+    public TippyFrame?[]? GetTippyFrame()
     {
         try
         {
+            if (this.newAgent != null)
+            {
+                if (this.oldAgentLeft == null)
+                {
+                    this.oldAgentLeft = false;
+                    this.CloseMessage();
+                    this.FrameTimer.Restart();
+                    this.CurrentFrameIndex = 0;
+                    this.CurrentAnimationType = this.GetRandomAnimation(AnimationCategory.Leave);
+                    this.AnimationQueue.Clear();
+                    this.animationIsFinished = false;
+                }
+
+                if (this.oldAgentLeft == false && this.AnimationQueue.Count == 0 && this.animationIsFinished)
+                {
+                    this.oldAgentLeft = true;
+                }
+
+                if (this.oldAgentLeft == true)
+                {
+                    this.CurrentMessage = null;
+                    this.tippyConfig.CurrentAgent = this.newAgent;
+                    this.LoadAgent(this.newAgent);
+                    this.OnAgentSwitched?.Invoke();
+                    this.newAgent = null;
+                    this.oldAgentLeft = null;
+                    return null;
+                }
+            }
             // reset tip queue if job changed
             if (this.JobChanged)
             {
@@ -315,18 +471,26 @@ public class TippyController : IHostedService, IDisposable
             }
 
             // loop animation
-            if (this.animationIsFinished) this.SetupNextAnimation(this.CurrentMessage.LoopAnimation);
+            if (this.animationIsFinished && this.CurrentMessage != null) this.SetupNextAnimation(this.CurrentMessage.LoopAnimation);
 
             // get all frames for animation
             var selectedFrame = this.tippyDataList.FirstOrDefault(data => data.Type == this.CurrentAnimationType);
             if (selectedFrame == null)
             {
-                selectedFrame = this.tippyDataList.First(data => data.Type == AnimationType.Idle);
+                var idleAnimations = this.Agent.GetAnimations(AnimationCategory.Idle);
+                int index = this.random.Next(idleAnimations.Count);
+                var nextAnimation = idleAnimations[index];
+                selectedFrame = this.tippyDataList.First(data => data.Type == nextAnimation);
                 this.pluginLog.Error("Could not find animation of type " + this.CurrentAnimationType);
             }
 
             var frames = selectedFrame.Frames;
             this.framesCount = frames.Count;
+
+            if (this.CurrentFrameIndex >= frames.Count)
+            {
+                this.CurrentFrameIndex = frames.Count - 1;
+            }
 
             // get current frame
             var frame = frames[this.CurrentFrameIndex];
@@ -334,35 +498,89 @@ public class TippyController : IHostedService, IDisposable
             // if still within duration show last image
             if (this.FrameTimer.ElapsedMilliseconds < frame.Duration)
             {
-                this.size = ImGuiHelpers.ScaledVector2(this.spriteSize.X, this.spriteSize.Y);
-                this.current = new TippyFrame(this.size, this.uv0, this.uv1, frame.Sound);
-                this.PlaySound(this.current.sound);
+                this.size = ImGuiHelpers.ScaledVector2(this.Agent.SpriteWidth, this.Agent.SpriteHeight);
+                for (int i = 0; i < 5; i++)
+                {
+                    var imageStartIndex = i * 2;
+                    if (frame.Images.Length >= imageStartIndex + 2 && this.uv0[i] != null)
+                    {
+                        this.current[i] = new TippyFrame(this.size, this.uv0[i]!.Value, this.uv1[i]!.Value, frame.Sound);
+                    }
+                    else
+                    {
+                        this.current[i] = null;
+                    }
+                }
+                var toPlay = this.current[0];
+                if (toPlay != null)
+                {
+                    // play sound
+                    this.PlaySound(toPlay.sound);
+                }
                 return this.current;
             }
 
             // set to final if next frame is last
             if (this.CurrentFrameIndex == frames.Count - 1)
             {
-                this.CurrentFrameIndex += 1;
                 this.animationIsFinished = true;
             }
 
             // move to next frame
             else
             {
-                this.CurrentFrameIndex += 1;
-                this.FrameTimer.Restart();
+                if (frame.Branching != null && frame.Branching.Branches != null && frame.Branching.Branches.Count != 0)
+                {
+                    var nextBranch = frame.Branching.PickNextBranch();
+                    if (nextBranch != null)
+                    {
+                        this.CurrentFrameIndex = nextBranch.FrameIndex;
+                        this.FrameTimer.Restart();
+                    }
+                    else
+                    {
+                        this.CurrentFrameIndex += 1;
+                        this.FrameTimer.Restart();
+                    }
+                }
+                else
+                {
+                    this.CurrentFrameIndex += 1;
+                    this.FrameTimer.Restart();
+                }
             }
 
             // update frame parameters
-            this.size = ImGuiHelpers.ScaledVector2(this.spriteSize.X, this.spriteSize.Y);
-            this.coords = new Vector2(frame.Images[0], frame.Images[1]);
-            this.uv0 = this.ToSpriteSheetScale(this.coords);
-            this.uv1 = this.ToSpriteSheetScale(this.coords + this.spriteSize);
-            this.current = new TippyFrame(this.size, this.uv0, this.uv1, frame.Sound);
+            this.size = ImGuiHelpers.ScaledVector2(this.Agent.SpriteWidth, this.Agent.SpriteHeight);
+            for (int i = 0; i < 5; i++)
+            {
+                var imageStartIndex = i * 2;
+                if (frame.Images.Length >= imageStartIndex + 2)
+                {
+                    this.coords[i] = new Vector2(frame.Images[imageStartIndex], frame.Images[imageStartIndex + 1]);
+                    this.uv0[i] = this.ToSpriteSheetScale(this.coords[i]!.Value);
+                    this.uv1[i] = this.ToSpriteSheetScale(this.coords[i]!.Value + new Vector2(this.Agent.SpriteWidth, this.Agent.SpriteHeight));
+                    this.current[i] = new TippyFrame(this.size, this.uv0[i]!.Value, this.uv1[i]!.Value, frame.Sound);
+                }
+                else if (frames.Count == this.CurrentFrameIndex + 1 && frame.Images.Length == 0)
+                {
+                    //Some animations have a final frame with no images, use the previous frame's image if that's the case
+                }
+                else
+                {
+                    this.current[i] = null;
+                    this.coords[i] = null;
+                    this.uv0[i] = null;
+                    this.uv1[i] = null;
+                }
+            }
 
-            // play sound
-            this.PlaySound(this.current.sound);
+            var toPlay2 = this.current[0];
+            if (toPlay2 != null)
+            {
+                // play sound
+                this.PlaySound(toPlay2.sound);
+            }
 
             // return animation
             return this.current;
@@ -370,8 +588,8 @@ public class TippyController : IHostedService, IDisposable
         catch (Exception)
         {
             // show previous frame in case something went wrong
-            this.pluginLog.Verbose("Failed frame at index " + this.CurrentFrameIndex + "/" + this.framesCount);
-            this.CurrentFrameIndex = this.framesCount - 1;
+            this.pluginLog.Verbose("Failed frame at index " + this.CurrentFrameIndex + "/" + this.framesCount + " for " + this.CurrentAnimationType);
+            this.CurrentFrameIndex = 0;
             this.animationIsFinished = true;
             return this.current;
         }
@@ -454,7 +672,7 @@ public class TippyController : IHostedService, IDisposable
     /// </summary>
     public void BlockTip()
     {
-        if (this.TippyState == TippyState.GivingTip)
+        if (this.TippyState == TippyState.GivingTip && this.CurrentMessage != null)
         {
             this.tippyConfig.AddBannedTipId(this.CurrentMessage.Id);
             this.CloseMessage();
@@ -530,6 +748,7 @@ public class TippyController : IHostedService, IDisposable
         message.Text = this.textHelperService.SanitizeText(message.Text);
         message.Text = this.textHelperService.WordWrap(message.Text, 30);
         this.CurrentMessage = message;
+        this.CurrentFrameIndex = 0;
         if (this.AnimationQueue.Count > 0)
         {
             this.AnimationQueue.TryDequeue(out var animationType);
@@ -537,7 +756,18 @@ public class TippyController : IHostedService, IDisposable
         }
         else
         {
-            this.CurrentAnimationType = message.AnimationType ?? AnimationType.Idle;
+            if (message.AnimationType != null)
+            {
+                this.CurrentAnimationType = message.AnimationType.Value;
+            }
+            else if (message.AnimationCategory != null)
+            {
+                this.CurrentAnimationType = this.GetRandomAnimation(message.AnimationCategory.Value);
+            }
+            else
+            {
+                this.CurrentAnimationType = this.GetRandomAnimation();
+            }
         }
 
         this.TippyState = tippyState;
@@ -561,23 +791,16 @@ public class TippyController : IHostedService, IDisposable
         this.FrameTimer.Restart();
     }
 
-    private Vector2 ToSpriteSheetScale(Vector2 input) => new(input.X / this.sheetSize.X, input.Y / this.sheetSize.Y);
+    private Vector2 ToSpriteSheetScale(Vector2 input) => new(input.X / this.Agent.SheetWidth, input.Y / this.Agent.SheetHeight);
 
     private AnimationType GetIdleAnimation()
     {
-        var random = new Random();
-        var rand = random.Next(0, 100);
-        if (rand < 90) return AnimationType.Idle;
-        var tipAnimations = new[]
+        var rand = this.random.Next(0, 100);
+        if (rand < 80)
         {
-            AnimationType.Headphones,
-            AnimationType.Searching,
-            AnimationType.Snooze,
-            AnimationType.PaperAirplane,
-            AnimationType.WindChimes,
-            AnimationType.ScratchHead,
-        };
-        var index = random.Next(0, tipAnimations.Length);
-        return tipAnimations[index];
+            return this.GetRandomAnimation(AnimationCategory.Still);
+        }
+
+        return this.GetRandomAnimation(AnimationCategory.Idle);
     }
 }

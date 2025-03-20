@@ -34,6 +34,19 @@ public class Tip : Message
     /// Initializes a new instance of the <see cref="Tip"/> class.
     /// Create tip.
     /// </summary>
+    /// <param name="text">tip text.</param>
+    /// <param name="animationCategory">animation category.</param>
+    public Tip(string text, AnimationCategory animationCategory)
+        : base(text, animationCategory)
+    {
+        this.TipType = TipType.General;
+        this.JobCode = JobCode.NONE;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Tip"/> class.
+    /// Create tip.
+    /// </summary>
     /// <param name="id">id of tip.</param>
     /// <param name="text">tip text.</param>
     public Tip(string id, string text)
@@ -56,6 +69,22 @@ public class Tip : Message
         this.TipType = TipType.General;
         this.JobCode = JobCode.NONE;
         this.AnimationType = animationType;
+    }
+
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Tip"/> class.
+    /// Create tip.
+    /// </summary>
+    /// <param name="id">id of tip.</param>
+    /// <param name="text">tip text.</param>
+    /// <param name="animationCategory">animation category.</param>
+    public Tip(string id, string text, AnimationCategory animationCategory)
+        : base(id, text)
+    {
+        this.TipType = TipType.General;
+        this.JobCode = JobCode.NONE;
+        this.AnimationCategory = animationCategory;
     }
 
     /// <summary>
@@ -107,6 +136,22 @@ public class Tip : Message
     /// Create tip.
     /// </summary>
     /// <param name="id">id of tip.</param>
+    /// <param name="jobCode">job id of the tip.</param>
+    /// <param name="text">tip text.</param>
+    /// <param name="animationCategory">animation category.</param>
+    public Tip(string id, JobCode jobCode, string text, AnimationCategory animationCategory)
+        : base(id, text)
+    {
+        this.TipType = TipType.Job;
+        this.JobCode = jobCode;
+        this.AnimationCategory = animationCategory;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Tip"/> class.
+    /// Create tip.
+    /// </summary>
+    /// <param name="id">id of tip.</param>
     /// <param name="roleCode">role id of the tip.</param>
     /// <param name="text">tip text.</param>
     /// <param name="animationType">animation type.</param>
@@ -116,6 +161,22 @@ public class Tip : Message
         this.TipType = TipType.Job;
         this.RoleCode = roleCode;
         this.AnimationType = animationType;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Tip"/> class.
+    /// Create tip.
+    /// </summary>
+    /// <param name="id">id of tip.</param>
+    /// <param name="roleCode">role id of the tip.</param>
+    /// <param name="text">tip text.</param>
+    /// <param name="animationCategory">animation category.</param>
+    public Tip(string id, RoleCode roleCode, string text, AnimationCategory animationCategory)
+        : base(id, text)
+    {
+        this.TipType = TipType.Job;
+        this.RoleCode = roleCode;
+        this.AnimationCategory = animationCategory;
     }
 
     /// <summary>

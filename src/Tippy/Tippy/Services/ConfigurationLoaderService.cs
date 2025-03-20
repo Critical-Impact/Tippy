@@ -10,14 +10,24 @@ namespace Tippy.Services;
 
 public class ConfigurationLoaderService(
     IDalamudPluginInterface pluginInterface,
-    IPluginLog pluginLog) : IHostedService
+    IPluginLog pluginLog,
+    IFramework framework) : IHostedService
 {
     private TippyConfig? configuration;
 
     /// <inheritdoc/>
     public Task StartAsync(CancellationToken cancellationToken)
     {
+        framework.Update += this.FrameworkOnUpdate;
         return Task.CompletedTask;
+    }
+
+    private void FrameworkOnUpdate(IFramework framework1)
+    {
+        if (this.configuration?.IsDirty ?? false)
+        {
+            this.Save();
+        }
     }
 
     public TippyConfig GetConfiguration()
@@ -48,6 +58,7 @@ public class ConfigurationLoaderService(
     /// <inheritdoc/>
     public Task StopAsync(CancellationToken cancellationToken)
     {
+        framework.Update -= this.FrameworkOnUpdate;
         this.Save();
         pluginLog.Verbose("Stopping configuration loader, saving.");
         return Task.CompletedTask;
