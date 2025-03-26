@@ -1,3 +1,5 @@
+using System.Linq;
+
 using CheapLoc;
 
 using DalaMock.Core.Mocks;

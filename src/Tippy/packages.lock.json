@@ -1,7 +1,7 @@
 {
   "version": 1,
   "dependencies": {
-    "net8.0-windows7.0": {
+    "net9.0-windows7.0": {
       "CheapLoc": {
         "type": "Direct",
         "requested": "[1.1.8, )",
@@ -14,12 +14,12 @@
       },
       "DalaMock.Host": {
         "type": "Direct",
-        "requested": "[2.1.6, )",
-        "resolved": "2.1.6",
-        "contentHash": "wCS8xL11kzT39jyMkNo9+kf/JmF3gcGaF1bk2avuf59+121xjv4lj/a5jTwjzOqZLomSVVKLxWdSEsk5EuRrjA==",
+        "requested": "[2.2.0, )",
+        "resolved": "2.2.0",
+        "contentHash": "DJJqmS4QEMDnrVFUmXERq4g6X00yO5l56BLHrC6OJG89ePnSo/flkg1P8fHFPGMyShhJizN39jeBcXCgKvB1ag==",
         "dependencies": {
           "Autofac.Extensions.DependencyInjection": "9.0.0",
-          "DalaMock.Shared": "2.1.6",
+          "DalaMock.Shared": "2.2.0",
           "Microsoft.Extensions.Hosting": "8.0.0",
           "Microsoft.Extensions.Hosting.Abstractions": "8.0.0",
           "Microsoft.Extensions.ObjectPool": "9.0.0-preview.6.24328.4"
@@ -27,9 +27,15 @@
       },
       "DalamudPackager": {
         "type": "Direct",
-        "requested": "[11.0.0, )",
-        "resolved": "11.0.0",
-        "contentHash": "bjT7XUlhIJSmsE/O76b7weUX+evvGQctbQB8aKXt94o+oPWxHpCepxAGMs7Thow3AzCyqWs7cOpp9/2wcgRRQA=="
+        "requested": "[12.0.0, )",
+        "resolved": "12.0.0",
+        "contentHash": "J5TJLV3f16T/E2H2P17ClWjtfEBPpq3yxvqW46eN36JCm6wR+EaoaYkqG9Rm5sHqs3/nK/vKjWWyvEs/jhKoXw=="
+      },
+      "DotNet.ReproducibleBuilds": {
+        "type": "Direct",
+        "requested": "[1.2.25, )",
+        "resolved": "1.2.25",
+        "contentHash": "xCXiw7BCxHJ8pF6wPepRUddlh2dlQlbr81gXA72hdk4FLHkKXas7EH/n+fk5UCA/YfMqG1Z6XaPiUjDbUNBUzg=="
       },
       "NAudio.Core": {
         "type": "Direct",
@@ -74,8 +80,8 @@
       },
       "DalaMock.Shared": {
         "type": "Transitive",
-        "resolved": "2.1.6",
-        "contentHash": "F6LtlbpWN6H1tpZaXpg0JcXEsnmeVg+1UMahKsmxtPKipqhu8/BEcXz6T1HbKF/p/ZHFGiFfpXwR5ooIMt2nXw==",
+        "resolved": "2.2.0",
+        "contentHash": "cX7L+JNkqLaOxZZ5a+Kdtpj5hPLo1bQumhNczgdTQxP/Pz80I7q0w1ZobEpY21D2bAkHmuF7Q9oM8CJ9QTbXeg==",
         "dependencies": {
           "Autofac.Extensions.DependencyInjection": "9.0.0",
           "Microsoft.Extensions.Hosting": "8.0.0",

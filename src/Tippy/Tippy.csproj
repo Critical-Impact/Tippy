@@ -1,33 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="Dalamud.Plugin.Bootstrap.targets"/>
-    
+<Project Sdk="Dalamud.NET.SDK/12.0.2">
 	<PropertyGroup>
 		<Version>1.4.0.0</Version>
 		<Title>Tippy</Title>
 		<Authors>kalilistic,Critical-Impact</Authors>
-        <OutputType>Library</OutputType>
-        <OutputPath>bin\$(Configuration)\</OutputPath>
-        <Configurations>Debug;Release;FullDebug</Configurations>
-        <TargetFramework>net8.0-windows</TargetFramework>
 	</PropertyGroup>
-    
-	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-		<DebugSymbols>true</DebugSymbols>
-		<DebugType>full</DebugType>
-		<Optimize>false</Optimize>
-		<OutputPath>bin\Debug\</OutputPath>
-		<DefineConstants>DEBUG;TRACE</DefineConstants>
-		<ErrorReport>prompt</ErrorReport>
-		<WarningLevel>4</WarningLevel>
-	</PropertyGroup>
-	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-		<DebugType>pdbonly</DebugType>
-		<Optimize>true</Optimize>
-		<OutputPath>bin\Release\</OutputPath>
-		<DefineConstants>TRACE</DefineConstants>
-		<ErrorReport>prompt</ErrorReport>
-		<WarningLevel>4</WarningLevel>
-	</PropertyGroup>
+
 	<ItemGroup>
 		<None Remove="stylecop.json" />
 		<AdditionalFiles Include="..\stylecop.json">
@@ -36,7 +13,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="CheapLoc" Version="1.1.8" />
-		<PackageReference Include="DalaMock.Host" Version="2.1.6" />
+		<PackageReference Include="DalaMock.Host" Version="2.2.0" />
         <PackageReference Include="NAudio.Core" Version="2.2.1" />
         <PackageReference Include="NAudio.Wasapi" Version="2.2.1" />
 		<PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.435">

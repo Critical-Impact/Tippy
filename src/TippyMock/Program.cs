@@ -1,3 +1,5 @@
+using System.IO;
+
 using Autofac;
 
 using DalaMock.Core.DI;
