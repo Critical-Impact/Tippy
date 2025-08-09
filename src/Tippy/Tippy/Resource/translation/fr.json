@@ -131,6 +131,10 @@
         "message": "Vous n'aimez pas les gens ? Essayez dès maintenant le plugin \"Visibility\" !",
         "description": "Tips..cctor"
     },
+    "GEN-000029": {
+        "message": "Parmi toutes les tartes, la tarte aux pommes est la meilleure, même si un sondage dit le contraire.",
+        "description": "Tips..cctor"
+    },
     "TANK-000001": {
         "message": "Conservez systématiquement vos compétences pour les combats contre les boss.",
         "description": "Tips..cctor"

@@ -1,5 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# 
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tippy", "Tippy\Tippy.csproj", "{EBAF1BDC-2509-4504-8A4B-ED9C563FBEB6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TippyMock", "TippyMock\TippyMock.csproj", "{DCD6B4E2-516F-4998-B826-071740C96ABB}"

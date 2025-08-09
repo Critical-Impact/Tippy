@@ -29,6 +29,14 @@ public class TippyPlugin : HostedPlugin
 
     public string Name => "Tippy";
 
+    public override HostedPluginOptions ConfigureOptions()
+    {
+        return new HostedPluginOptions()
+        {
+            UseMediatorService = false,
+        };
+    }
+
     public override void ConfigureContainer(ContainerBuilder containerBuilder)
     {
         // Windows

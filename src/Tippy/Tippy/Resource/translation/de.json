@@ -131,6 +131,10 @@
         "message": "Du kannst Leute nicht ausstehen? Probiere das Visibility-Plugin noch heute!",
         "description": "Tips..cctor"
     },
+    "GEN-000029": {
+        "message": "Von allen Kuchen ist Apfelkuchen der beste, auch wenn eine Umfrage etwas anderes sagt.",
+        "description": "Tips..cctor"
+    },
     "TANK-000001": {
         "message": "Sichere immer deine Cooldowns für Bosskämpfe.",
         "description": "Tips..cctor"

@@ -131,6 +131,10 @@
         "message": "¿No te gusta la gente? ¡Prueba el plugin Visibility hoy mismo!",
         "description": "Tips..cctor"
     },
+    "GEN-000029": {
+        "message": "De todos los pasteles, el pastel de manzana es el mejor, aunque una encuesta diga lo contrario.",
+        "description": "Tips..cctor"
+    },
     "TANK-000001": {
         "message": "Guarda siempre tus cooldowns para los combates contra jefes.",
         "description": "Tips..cctor"

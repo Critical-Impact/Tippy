@@ -66,7 +66,8 @@ public class Tips : IDisposable
             new Tip("GEN-000024", CheapLoc.Loc.Localize("GEN-000024", "What's Twintania's favorite party game? Twister."), AnimationCategory.Random),
             new Tip("GEN-000025", CheapLoc.Loc.Localize("GEN-000025", "Why did the Sahagin cross the waves? To get to the other tide.")),
             new Tip("GEN-000026", CheapLoc.Loc.Localize("GEN-000026", "What do you call a poor Lala? A little short.")),
-            new Tip("GEN-000027", CheapLoc.Loc.Localize("GEN-000027", "What do people do when they are cold? They Shiva."))
+            new Tip("GEN-000027", CheapLoc.Loc.Localize("GEN-000027", "What do people do when they are cold? They Shiva.")),
+            new Tip("GEN-000029", CheapLoc.Loc.Localize("GEN-000029", "Of all the pies, apple pie is the best even if a poll says otherwise."))
             // Add all other general tips here
         ];
 

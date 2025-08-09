@@ -6,7 +6,7 @@ using DalaMock.Shared.Interfaces;
 using Dalamud.Interface.ManagedFontAtlas;
 using Dalamud.Interface.Utility.Raii;
 
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Tippy.Services;
 

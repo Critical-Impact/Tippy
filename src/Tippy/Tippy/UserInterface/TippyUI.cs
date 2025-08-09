@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using CheapLoc;
+using DalaMock.Host.Factories;
 using DalaMock.Shared.Interfaces;
 using Dalamud.Interface;
 using Dalamud.Interface.Colors;
@@ -14,7 +15,7 @@ using Dalamud.Interface.Textures;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 using Microsoft.Extensions.Hosting;
 using Tippy.Services;
 
@@ -67,7 +68,7 @@ public class TippyUI : IHostedService, IDisposable
         IPluginLog pluginLog,
         JobMonitorService jobMonitorService,
         IEnumerable<Window> windows,
-        IWindowSystem windowSystem,
+        IWindowSystemFactory windowSystemFactory,
         IFontService fontService)
     {
         this.configWindow = configWindow;
@@ -77,7 +78,7 @@ public class TippyUI : IHostedService, IDisposable
         this.pluginLog = pluginLog;
         this.jobMonitorService = jobMonitorService;
         this.windows = windows;
-        this.windowSystem = windowSystem;
+        this.windowSystem = windowSystemFactory.Create("Tippy");
         this.fontService = fontService;
         this.tippyController.OnAgentSwitched += this.AgentSwitched;
         this.AgentSwitched();
@@ -198,8 +199,8 @@ public class TippyUI : IHostedService, IDisposable
         // set size / pos
         this.windowSize = ImGuiHelpers.ScaledVector2(windowWidth, windowHeight);
         this.bubbleSize = ImGuiHelpers.ScaledVector2(bubbleWidth, bubbleHeight);
-        this.agentPos = ImGuiHelpers.ScaledVector2((this.windowSize.X - this.tippyController.Agent.SpriteWidth) / 2.0f, this.windowSize.Y - this.tippyController.Agent.SpriteHeight);
-        this.bubblePos = ImGuiHelpers.ScaledVector2((this.windowSize.X - bubbleWidth) / 2.0f, paddingHeight);
+        this.agentPos = ImGuiHelpers.ScaledVector2((windowWidth - this.tippyController.Agent.SpriteWidth) / 2.0f, windowHeight - this.tippyController.Agent.SpriteHeight);
+        this.bubblePos = ImGuiHelpers.ScaledVector2((windowWidth - bubbleWidth) / 2.0f, paddingHeight);
         this.bubbleSpeechOffset = ImGuiHelpers.ScaledVector2(bubbleSpeechOffsetVal, bubbleSpeechOffsetVal);
         this.bubbleButtonOffset = ImGuiHelpers.ScaledVector2(12, 25);
         this.buttonSize = ImGuiHelpers.ScaledVector2(40, 22);
@@ -240,7 +241,7 @@ public class TippyUI : IHostedService, IDisposable
     private void DrawBubble()
     {
         ImGui.SetCursorPos(this.bubblePos);
-        ImGui.Image(this.tippyController.BubbleTexture.GetWrapOrEmpty().ImGuiHandle, this.bubbleSize);
+        ImGui.Image(this.tippyController.BubbleTexture.GetWrapOrEmpty().Handle, this.bubbleSize);
         ImGui.SetCursorPos(this.bubblePos + this.bubbleSpeechOffset);
         ImGui.TextUnformatted(this.tippyController.CurrentMessage?.Text ?? string.Empty);
     }
@@ -279,7 +280,7 @@ public class TippyUI : IHostedService, IDisposable
                     if (this.tippyController.TippyTexture.TryGetWrap(out var texture, out _))
                     {
                         ImGui.Image(
-                            texture.ImGuiHandle,
+                            texture.Handle,
                             frame.size,
                             frame.uv0,
                             frame.uv1);

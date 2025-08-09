@@ -1,0 +1,10 @@
+{
+  "solution": "Tippy.sln",
+  "solutionFolder": null,
+  "mappings": {
+    "DalaMock.Host": "../../DalaMock/DalaMock.Host/DalaMock.Host.csproj",
+    "DalaMock.Core": "../../DalaMock/DalaMock/DalaMock.Core.csproj",
+    "DalaMock.Shared": "../../DalaMock/DalaMock.Shared/DalaMock.Shared.csproj"
+  },
+  "removeProjects": true
+}
