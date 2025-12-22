@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 using DalaMock.Shared.Interfaces;
@@ -38,7 +39,12 @@ public class MockFontHandle : IFontHandle
     public void Dispose()
     {
     }
-
+    
+    public ILockedImFont? TryLock(out string? errorMessage)
+    {
+        throw new NotImplementedException();
+    }
+    
     public ILockedImFont Lock()
     {
        throw new NotImplementedException();
@@ -63,7 +69,12 @@ public class MockFontHandle : IFontHandle
     {
         throw new NotImplementedException();
     }
-
+    
+    public Task<IFontHandle> WaitAsync(CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+    
     public Exception? LoadException => null;
 
     public bool Available => true;
