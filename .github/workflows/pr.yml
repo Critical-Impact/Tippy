@@ -1,0 +1,90 @@
+name: Create D17 PR
+
+on:
+  push:
+    tags:
+      - '*'
+
+env:
+  INTERNAL_NAME: Tippy
+  PLUGIN_NAME: Tippy
+  UPDATE_NAME: tippers
+
+jobs:
+  update-repo:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v4
+
+      - name: Extract version and changelog
+        id: changelog
+        run: |
+          VERSION=$(grep -m1 -oP '(?<=## \[)[0-9]+\.[0-9]+\.[0-9]+' src/${{ env.INTERNAL_NAME }}/CHANGELOG.md)
+          echo "version=1.$VERSION" >> $GITHUB_OUTPUT
+          CHANGELOG=$(awk -v ver=$VERSION '/^#+ \[/ { if (p) { exit }; if ($2 == "["ver"]") { p=1; next} } p && NF' src/${{ env.INTERNAL_NAME }}/CHANGELOG.md)
+          echo "log<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Extract release notes
+        id: extract-release-notes
+        uses: ffurrer2/extract-release-notes@v2
+        with:
+          release_notes_file: notes.md
+          changelog_file: src/${{ env.INTERNAL_NAME }}/CHANGELOG.md
+
+      - name: Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release create ${{ github.ref_name }} --title ${{ github.ref_name }} --notes-file notes.md
+
+      - name: Checkout fork of external repo
+        uses: actions/checkout@v4
+        with:
+          repository: Critical-Impact/DalamudPluginsD17
+          fetch-depth: '1'
+          path: external
+          token: ${{ secrets.PR_PAT }}
+
+      - name: Configure git and create branch
+        run: |
+          cd external
+          git remote add goatcorp https://github.com/goatcorp/DalamudPluginsD17.git
+          git fetch goatcorp
+          git checkout -b ${{ env.UPDATE_NAME }}-${{ steps.changelog.outputs.version }} goatcorp/main
+
+      - name: Configure git author
+        run: |
+          cd external
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
+      - name: Update manifest.toml
+        run: |
+          cd external
+          pip install toml
+          python - <<EOF
+          import toml
+          from pathlib import Path
+          
+          manifest_path = Path("stable/${{ env.INTERNAL_NAME }}/manifest.toml")
+          data = toml.load(manifest_path)
+          
+          # Update commit and changelog
+          data["plugin"]["commit"] = "${GITHUB_SHA}"
+          data["plugin"]["version"] = "${{ steps.changelog.outputs.version }}"
+          data["plugin"]["changelog"] = """${{ steps.changelog.outputs.log }}"""
+          
+          with manifest_path.open("w") as f:
+              toml.dump(data, f)
+          EOF
+          git add stable/${{ env.INTERNAL_NAME }}/manifest.toml
+          git commit -m "${{ env.PLUGIN_NAME }} ${{ steps.changelog.outputs.version }}"          
+
+      - name: Push branch to fork
+        run: |
+          cd external
+          git push origin -f HEAD:${{ env.UPDATE_NAME }}-${{ steps.changelog.outputs.version }}

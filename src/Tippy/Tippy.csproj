@@ -613,4 +613,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="CHANGELOG.md" />
+  </ItemGroup>
 </Project>
