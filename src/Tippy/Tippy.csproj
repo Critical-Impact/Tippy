@@ -54,6 +54,8 @@
     <EmbeddedResource Include="Resource\mssansserif.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+    <None Remove="Tippy\Resource\source\Tippy_Localizable.json" />
+    <EmbeddedResource Include="Tippy\Resource\source\Tippy_Localizable.json" />
     <None Remove="Tippy\Resource\translation\de.json" />
     <EmbeddedResource Include="Tippy\Resource\translation\de.json" />
     <None Remove="Tippy\Resource\translation\es.json" />

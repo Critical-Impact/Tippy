@@ -53,18 +53,46 @@ public class TranslationService : IHostedService, IDisposable
             else
             {
                 this.pluginLog.Verbose($"Could not load translation for {langCode}, falling back to en");
-                Loc.SetupWithFallbacks();
+                this.LoadFallbackTranslations();
             }
         }
         else
         {
             this.pluginLog.Verbose($"No translation for {langCode}, falling back to en");
-            Loc.SetupWithFallbacks();
+            this.LoadFallbackTranslations();
         }
 
         if (emitEvents)
         {
             this.OnNewLanguageLoaded?.Invoke();
+        }
+    }
+
+    private void LoadFallbackTranslations()
+    {
+        try
+        {
+            var resourceFile = typeof(TippyPlugin).Assembly
+                                                  .GetManifestResourceStream("Tippy.Tippy.Resource.source.Tippy_Localizable.json");
+            if (resourceFile != null)
+            {
+                using (StreamReader streamReader = new StreamReader(resourceFile))
+                {
+                    var lines = streamReader.ReadToEnd();
+                    Loc.Setup(lines);
+                    this.pluginLog.Verbose("Loaded fallback English translations from Tippy_Localizable.json");
+                }
+            }
+            else
+            {
+                this.pluginLog.Warning("Could not load fallback translations, using CheapLoc defaults");
+                Loc.SetupWithFallbacks();
+            }
+        }
+        catch (Exception ex)
+        {
+            this.pluginLog.Warning(ex, "Failed to load fallback translations, using CheapLoc defaults");
+            Loc.SetupWithFallbacks();
         }
     }
 
