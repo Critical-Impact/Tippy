@@ -5,7 +5,7 @@
     "SheetHeight" : 2160,
     "PaddingWidth" : 40,
     "PaddingHeight" : 42,
-    "SoundCount" : 0,
+    "SoundCount" : 10,
     "Animations": {
         "Still": [
             "Still"

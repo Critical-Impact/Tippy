@@ -13,7 +13,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CheapLoc" Version="1.1.8" />
-    <PackageReference Include="DalaMock.Host" Version="4.0.0" />
+    <PackageReference Include="DalaMock.Host" Version="4.0.5" />
     <PackageReference Include="NAudio.Core" Version="2.2.1" />
     <PackageReference Include="NAudio.Wasapi" Version="2.2.1" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.435">

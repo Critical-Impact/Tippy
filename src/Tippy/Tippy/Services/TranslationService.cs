@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -47,19 +48,19 @@ public class TranslationService : IHostedService, IDisposable
             {
                 StreamReader streamReader = new StreamReader(resourceFile);
                 var lines = streamReader.ReadToEnd();
-                Loc.Setup(lines);
-                this.pluginLog.Verbose($"Loaded translation files for {langCode}");
+                Loc.Setup(lines, typeof(TippyPlugin).Assembly);
+                this.pluginLog.Info($"Loaded translation files for {langCode}");
             }
             else
             {
-                this.pluginLog.Verbose($"Could not load translation for {langCode}, falling back to en");
-                Loc.SetupWithFallbacks();
+                this.pluginLog.Warning($"Could not load translation for {langCode}, falling back to en");
+                Loc.Setup("{}", typeof(TippyPlugin).Assembly);
             }
         }
         else
         {
-            this.pluginLog.Verbose($"No translation for {langCode}, falling back to en");
-            Loc.SetupWithFallbacks();
+            this.pluginLog.Warning($"No translation for {langCode}, falling back to en");
+            Loc.Setup("{}", typeof(TippyPlugin).Assembly);
         }
 
         if (emitEvents)

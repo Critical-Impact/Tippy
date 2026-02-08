@@ -5,7 +5,7 @@
     "SheetHeight" : 3162,
     "PaddingWidth" : 40,
     "PaddingHeight" : 42,
-    "SoundCount" : 0,
+    "SoundCount" : 15,
     "Animations" :{
         "Still" : ["Idle"],
         "Idle" : ["Headphones", "Idle", "PaperAirplane", "Read"],

@@ -40,18 +40,18 @@ public class TippyPlugin : HostedPlugin
     public override void ConfigureContainer(ContainerBuilder containerBuilder)
     {
         // Windows
-        containerBuilder.RegisterType<TippyUI>().AsSelf().SingleInstance();
         containerBuilder.RegisterType<ConfigWindow>().As<Window>().AsSelf().SingleInstance();
         containerBuilder.RegisterType<CommandService>().AsSelf().SingleInstance();
-        containerBuilder.RegisterType<ConfigurationLoaderService>().AsSelf().SingleInstance();
-        containerBuilder.RegisterType<JobMonitorService>().AsSelf().SingleInstance();
         containerBuilder.RegisterType<ResourceService>().AsSelf().SingleInstance();
         containerBuilder.RegisterType<TippyAPI>().AsImplementedInterfaces().AsSelf().SingleInstance();
-        containerBuilder.RegisterType<TippyController>().AsSelf().SingleInstance();
-        containerBuilder.RegisterType<TippyProvider>().AsSelf().SingleInstance();
         containerBuilder.RegisterType<TextHelperService>().AsSelf().SingleInstance();
-        containerBuilder.RegisterType<TranslationService>().AsSelf().SingleInstance();
         containerBuilder.RegisterType<FontService>().AsImplementedInterfaces().SingleInstance();
+        this.RegisterHostedService(typeof(ConfigurationLoaderService));
+        this.RegisterHostedService(typeof(TranslationService));
+        this.RegisterHostedService(typeof(JobMonitorService));
+        this.RegisterHostedService(typeof(TippyController));
+        this.RegisterHostedService(typeof(TippyUI));
+        this.RegisterHostedService(typeof(TippyProvider));
 
         // Data
         containerBuilder.RegisterType<Messages>().AsSelf().SingleInstance();
@@ -67,11 +67,5 @@ public class TippyPlugin : HostedPlugin
 
     public override void ConfigureServices(IServiceCollection serviceCollection)
     {
-        serviceCollection.AddHostedService(p => p.GetRequiredService<ConfigurationLoaderService>());
-        serviceCollection.AddHostedService(p => p.GetRequiredService<TranslationService>());
-        serviceCollection.AddHostedService(p => p.GetRequiredService<JobMonitorService>());
-        serviceCollection.AddHostedService(p => p.GetRequiredService<TippyController>());
-        serviceCollection.AddHostedService(p => p.GetRequiredService<TippyUI>());
-        serviceCollection.AddHostedService(p => p.GetRequiredService<TippyProvider>());
     }
 }

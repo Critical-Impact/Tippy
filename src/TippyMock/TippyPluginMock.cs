@@ -37,9 +37,4 @@ public class TippyPluginMock(
         containerBuilder.RegisterType<MockWindow>().AsSelf().As<Window>().SingleInstance();
         containerBuilder.RegisterType<MockFontService>().AsImplementedInterfaces().SingleInstance();
     }
-
-    public override void ConfigureServices(IServiceCollection serviceCollection)
-    {
-        base.ConfigureServices(serviceCollection);
-    }
 }
