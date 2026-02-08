@@ -110,7 +110,7 @@ public class TippyController : IHostedService, IDisposable
         var animationData = JsonConvert.DeserializeObject<List<AnimationData>>(frameJson)!;
         var agentData = JsonConvert.DeserializeObject<TippyAgent>(agentJson)!;
         var agentSounds = new Dictionary<int, string>();
-        for (var i = 1; i < agentData.SoundCount; i++)
+        for (var i = 1; i <= agentData.SoundCount; i++)
         {
             agentSounds.Add(i, this.resourceService.GetResourcePath(Path.Join(agentName, $"sound_{i}.mp3")));
         }
@@ -360,6 +360,7 @@ public class TippyController : IHostedService, IDisposable
             {
                 if (!this.Agent.Sounds.TryGetValue(num, out var sound))
                 {
+                    this.isSoundPlaying = false;
                     this.pluginLog.Error($"Could not find sound {num}");
                     return;
                 }
