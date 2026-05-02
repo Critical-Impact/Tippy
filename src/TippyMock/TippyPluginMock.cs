@@ -15,18 +15,8 @@ using Microsoft.Extensions.DependencyInjection;
 namespace TippyMock;
 
 public class TippyPluginMock(
-    IDalamudPluginInterface pluginInterface,
-    IPluginLog pluginLog,
-    ICommandManager commandManager,
-    IClientState clientState,
-    IFramework framework,
-    ITextureProvider textureProvider) : TippyPlugin(
-    pluginInterface,
-    pluginLog,
-    commandManager,
-    clientState,
-    framework,
-    textureProvider)
+    IDalamudPluginInterface pluginInterface) : TippyPlugin(
+    pluginInterface)
 {
     public override void ConfigureContainer(ContainerBuilder containerBuilder)
     {

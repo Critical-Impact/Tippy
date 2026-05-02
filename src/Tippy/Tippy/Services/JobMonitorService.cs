@@ -9,14 +9,14 @@ namespace Tippy.Services;
 
 public class JobMonitorService : IHostedService
 {
-    private readonly IClientState clientState;
+    private readonly IObjectTable objectTable;
     private readonly IFramework framework;
     private uint currentJobId;
     private uint currentRoleId;
 
-    public JobMonitorService(IClientState clientState, IFramework framework)
+    public JobMonitorService(IObjectTable objectTable, IFramework framework)
     {
-        this.clientState = clientState;
+        this.objectTable = objectTable;
         this.framework = framework;
     }
 
@@ -44,15 +44,15 @@ public class JobMonitorService : IHostedService
     {
         try
         {
-            if (this.clientState.LocalPlayer == null || !this.clientState.LocalPlayer.ClassJob.IsValid)
+            if (this.objectTable.LocalPlayer == null || !this.objectTable.LocalPlayer.ClassJob.IsValid)
             {
                 return;
             }
 
-            if (this.clientState.LocalPlayer.ClassJob.RowId != this.CurrentJobId)
+            if (this.objectTable.LocalPlayer.ClassJob.RowId != this.CurrentJobId)
             {
-                this.currentJobId = this.clientState.LocalPlayer.ClassJob.RowId;
-                this.currentRoleId = this.clientState.LocalPlayer.ClassJob.Value.Role;
+                this.currentJobId = this.objectTable.LocalPlayer.ClassJob.RowId;
+                this.currentRoleId = this.objectTable.LocalPlayer.ClassJob.Value.Role;
                 this.JobStateChanged?.Invoke(this.CurrentJobId, this.CurrentRoleId);
             }
         }

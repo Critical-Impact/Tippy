@@ -15,13 +15,8 @@ public class TippyPlugin : HostedPlugin
     /// Initializes a new instance of the <see cref="TippyPlugin"/> class.
     /// </summary>
     public TippyPlugin(
-        IDalamudPluginInterface pluginInterface,
-        IPluginLog pluginLog,
-        ICommandManager commandManager,
-        IClientState clientState,
-        IFramework framework,
-        ITextureProvider textureProvider)
-        : base(pluginInterface, pluginLog, commandManager, clientState, framework, textureProvider)
+        IDalamudPluginInterface pluginInterface)
+        : base(pluginInterface)
     {
         this.CreateHost();
         this.Start();
